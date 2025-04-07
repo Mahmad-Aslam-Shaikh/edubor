@@ -13,4 +13,7 @@ public interface MasterCategoryService {
 
     List<MasterCategoryResponse> getActiveMasterCategories();
 
+    MasterCategoryResponse getMasterCategoryById(Integer categoryId);
+
+    Boolean deleteMasterCategoryById(Integer categoryId);
 }

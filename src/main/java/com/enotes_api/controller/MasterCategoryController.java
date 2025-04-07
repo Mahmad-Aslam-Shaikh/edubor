@@ -6,8 +6,11 @@ import com.enotes_api.service.MasterCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +43,22 @@ public class MasterCategoryController {
         return new ResponseEntity<>(masterCategories, HttpStatus.OK);
     }
 
+    @GetMapping("/{category-id}")
+    public ResponseEntity<Object> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
+        MasterCategoryResponse masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
+        if (ObjectUtils.isEmpty(masterCategory)) {
+            return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(masterCategory, HttpStatus.OK);
+    }
+
+    @PutMapping("/{category-id}")
+    public ResponseEntity<String> deleteMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
+        Boolean isDeleted = masterCategoryService.deleteMasterCategoryById(categoryId);
+        if (isDeleted) {
+            return new ResponseEntity<>("Category deleted Successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);
+    }
 
 }
