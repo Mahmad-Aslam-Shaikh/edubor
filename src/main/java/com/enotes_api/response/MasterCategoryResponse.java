@@ -2,6 +2,8 @@ package com.enotes_api.response;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class MasterCategoryResponse {
 
@@ -14,5 +16,7 @@ public class MasterCategoryResponse {
     private Boolean isActive;
 
     private Integer createdBy;
+
+    private LocalDateTime createdOn;
 
 }
