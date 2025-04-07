@@ -1,13 +1,16 @@
 package com.enotes_api.service;
 
-import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.request.MasterCategoryRequest;
+import com.enotes_api.response.MasterCategoryResponse;
 
 import java.util.List;
 
 public interface MasterCategoryService {
-	
-	MasterCategoryEntity saveMasterCategory(MasterCategoryRequest masterCategoryRequest);
-	
-	List<MasterCategoryEntity> getAllMasterCategories();
+
+    MasterCategoryResponse saveMasterCategory(MasterCategoryRequest masterCategoryRequest);
+
+    List<MasterCategoryResponse> getAllMasterCategories();
+
+    List<MasterCategoryResponse> getActiveMasterCategories();
+
 }
