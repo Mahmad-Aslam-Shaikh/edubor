@@ -3,6 +3,7 @@ package com.enotes_api.controller;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
 import com.enotes_api.service.MasterCategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/master-category")
+@AllArgsConstructor
 public class MasterCategoryController {
 
-    @Autowired
     private MasterCategoryService masterCategoryService;
 
     @PostMapping

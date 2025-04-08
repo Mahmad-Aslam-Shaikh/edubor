@@ -8,7 +8,10 @@ import com.enotes_api.service.MasterCategoryService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,19 +26,43 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
 
     @Override
     public MasterCategoryResponse saveMasterCategory(MasterCategoryRequest masterCategoryRequest) {
+        MasterCategoryEntity masterCategoryEntity = null;
 
-        MasterCategoryEntity masterCategoryEntity = modelMapper.map(masterCategoryRequest, MasterCategoryEntity.class);
+        if (!ObjectUtils.isEmpty(masterCategoryRequest.getId())) {
+            Optional<MasterCategoryEntity> optionalMasterCategory =
+                    masterCategoryRepository.findByIdAndIsDeleted(masterCategoryRequest.getId(), Boolean.FALSE);
+            if (optionalMasterCategory.isPresent()) {
+                MasterCategoryEntity masterCategory = optionalMasterCategory.get();
+                masterCategoryEntity = updateMasterCategory(masterCategoryRequest, masterCategory);
+            }
+        } else
+            masterCategoryEntity = modelMapper.map(masterCategoryRequest, MasterCategoryEntity.class);
 
 //		MasterCategoryEntity masterCategoryEntity = new MasterCategoryEntity();
 //		masterCategoryEntity.setName(masterCategoryRequest.getName());
 //		masterCategoryEntity.setDescription(masterCategoryRequest.getDescription());
 
-        MasterCategoryEntity savedMasterCategory = masterCategoryRepository.save(masterCategoryEntity);
+        if (masterCategoryEntity != null) {
+            masterCategoryEntity = masterCategoryRepository.save(masterCategoryEntity);
+            MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategoryEntity,
+                    MasterCategoryResponse.class);
+            return masterCategoryResponse;
+        }
+    return  null;
+    }
 
-        MasterCategoryResponse masterCategoryResponse = modelMapper.map(savedMasterCategory,
-                MasterCategoryResponse.class);
+    private MasterCategoryEntity updateMasterCategory(MasterCategoryRequest masterCategoryRequest,
+                                                      MasterCategoryEntity masterCategoryEntity) {
+        if (!ObjectUtils.isEmpty(masterCategoryRequest.getName()))
+            masterCategoryEntity.setName(masterCategoryRequest.getName());
 
-        return masterCategoryResponse;
+        if (!ObjectUtils.isEmpty(masterCategoryRequest.getDescription()))
+            masterCategoryEntity.setDescription(masterCategoryRequest.getDescription());
+
+        masterCategoryEntity.setUpdatedBy(1);
+        masterCategoryEntity.setUpdatedOn(LocalDateTime.now());
+
+        return masterCategoryEntity;
     }
 
     @Override
@@ -49,7 +76,8 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
 
     @Override
     public List<MasterCategoryResponse> getActiveMasterCategories() {
-        List<MasterCategoryEntity> activeCategories = masterCategoryRepository.findByIsActiveAndIsDeleted(Boolean.TRUE, Boolean.FALSE);
+        List<MasterCategoryEntity> activeCategories =
+                masterCategoryRepository.findByIsActiveAndIsDeleted(Boolean.TRUE, Boolean.FALSE);
         List<MasterCategoryResponse> activeCategoryResponse =
                 activeCategories.stream().map(eachCategory -> modelMapper.map(eachCategory,
                         MasterCategoryResponse.class)).collect(Collectors.toList());
@@ -58,7 +86,8 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
 
     @Override
     public MasterCategoryResponse getMasterCategoryById(Integer categoryId) {
-        Optional<MasterCategoryEntity> optionalMasterCategory = masterCategoryRepository.findByIdAndIsDeleted(categoryId, Boolean.FALSE);
+        Optional<MasterCategoryEntity> optionalMasterCategory =
+                masterCategoryRepository.findByIdAndIsDeleted(categoryId, Boolean.FALSE);
         if (optionalMasterCategory.isPresent()) {
             MasterCategoryEntity masterCategory = optionalMasterCategory.get();
             MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategory,
