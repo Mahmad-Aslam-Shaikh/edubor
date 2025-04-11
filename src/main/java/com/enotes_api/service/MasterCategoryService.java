@@ -17,4 +17,7 @@ public interface MasterCategoryService {
     MasterCategoryResponse getMasterCategoryById(Integer categoryId) throws ResourceNotFoundException;
 
     Boolean deleteMasterCategoryById(Integer categoryId);
+
+    MasterCategoryResponse updateMasterCategory(MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException;
+
 }
