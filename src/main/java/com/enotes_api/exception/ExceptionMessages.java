@@ -4,4 +4,7 @@ public class ExceptionMessages {
 
     // Category Related Exception Messages
     public static String CATEGORY_NOT_FOUND_MESSAGE = "Category Not Found With ID = ";
+
+    public static String CATEGORY_ALREADY_EXISTS_MESSAGE = "Category already exists";
+
 }

@@ -2,6 +2,7 @@ package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.MasterCategoryRepository;
 import com.enotes_api.request.MasterCategoryRequest;
@@ -26,7 +27,12 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public MasterCategoryResponse saveMasterCategory(MasterCategoryRequest masterCategoryRequest) {
+    public MasterCategoryResponse saveMasterCategory(MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
+        Boolean isCategoryExists = masterCategoryRepository.existsByName(masterCategoryRequest.getName().trim());
+
+        if (isCategoryExists)
+            throw new ResourceAlreadyExistsException(ExceptionMessages.CATEGORY_ALREADY_EXISTS_MESSAGE);
+
         MasterCategoryEntity masterCategoryEntity = modelMapper.map(masterCategoryRequest, MasterCategoryEntity.class);
         masterCategoryEntity = masterCategoryRepository.save(masterCategoryEntity);
         MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategoryEntity,
@@ -93,14 +99,21 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
     }
 
     @Override
-    public MasterCategoryResponse updateMasterCategory(MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException {
+    public MasterCategoryResponse updateMasterCategory(MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         Optional<MasterCategoryEntity> optionalMasterCategory =
                 masterCategoryRepository.findByIdAndIsDeleted(masterCategoryRequest.getId(), Boolean.FALSE);
+
         if (optionalMasterCategory.isPresent()) {
             MasterCategoryEntity masterCategory = optionalMasterCategory.get();
 
-            if (!ObjectUtils.isEmpty(masterCategoryRequest.getName()))
-                masterCategory.setName(masterCategoryRequest.getName());
+            if (!ObjectUtils.isEmpty(masterCategoryRequest.getName())) {
+                Boolean isCategoryExists =
+                        masterCategoryRepository.existsByName(masterCategoryRequest.getName().trim());
+                if (isCategoryExists)
+                    throw new ResourceAlreadyExistsException(ExceptionMessages.CATEGORY_ALREADY_EXISTS_MESSAGE);
+                else
+                    masterCategory.setName(masterCategoryRequest.getName());
+            }
 
             if (!ObjectUtils.isEmpty(masterCategoryRequest.getDescription()))
                 masterCategory.setDescription(masterCategoryRequest.getDescription());

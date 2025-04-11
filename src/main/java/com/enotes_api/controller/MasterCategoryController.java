@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
@@ -27,7 +28,7 @@ public class MasterCategoryController {
     private MasterCategoryService masterCategoryService;
 
     @PostMapping
-    public ResponseEntity<MasterCategoryResponse> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) {
+    public ResponseEntity<MasterCategoryResponse> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
         MasterCategoryResponse savedMasterCategoryResponse =
                 masterCategoryService.saveMasterCategory(masterCategoryRequest);
         return new ResponseEntity<>(savedMasterCategoryResponse, HttpStatus.CREATED);
@@ -55,7 +56,7 @@ public class MasterCategoryController {
     }
 
     @PutMapping
-    public ResponseEntity<MasterCategoryResponse> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException {
+    public ResponseEntity<MasterCategoryResponse> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         MasterCategoryResponse updatedMasterCategoryResponse =
                 masterCategoryService.updateMasterCategory(masterCategoryRequest);
         return new ResponseEntity<>(updatedMasterCategoryResponse, HttpStatus.OK);
