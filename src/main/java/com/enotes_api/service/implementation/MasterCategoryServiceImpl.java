@@ -105,9 +105,6 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
             if (!ObjectUtils.isEmpty(masterCategoryRequest.getDescription()))
                 masterCategory.setDescription(masterCategoryRequest.getDescription());
 
-            masterCategory.setUpdatedBy(1);
-            masterCategory.setUpdatedOn(LocalDateTime.now());
-
             masterCategory = masterCategoryRepository.save(masterCategory);
             MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategory,
                     MasterCategoryResponse.class);
