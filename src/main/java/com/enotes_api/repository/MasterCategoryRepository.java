@@ -15,4 +15,6 @@ public interface MasterCategoryRepository extends JpaRepository<MasterCategoryEn
     List<MasterCategoryEntity> findByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
 
     List<MasterCategoryEntity> findAllByIsDeleted(Boolean isDeleted);
+
+    Boolean existsByName(String categoryName);
 }
