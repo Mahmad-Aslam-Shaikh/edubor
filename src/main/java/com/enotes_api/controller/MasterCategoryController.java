@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
 import com.enotes_api.service.MasterCategoryService;
@@ -45,7 +46,7 @@ public class MasterCategoryController {
     }
 
     @GetMapping("/{category-id}")
-    public ResponseEntity<Object> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
+    public ResponseEntity<Object> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
         MasterCategoryResponse masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
         if (ObjectUtils.isEmpty(masterCategory)) {
             return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);

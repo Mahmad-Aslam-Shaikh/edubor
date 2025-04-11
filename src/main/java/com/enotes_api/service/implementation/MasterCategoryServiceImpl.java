@@ -1,6 +1,8 @@
 package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.MasterCategoryEntity;
+import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.MasterCategoryRepository;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
@@ -48,7 +50,7 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
                     MasterCategoryResponse.class);
             return masterCategoryResponse;
         }
-    return  null;
+        return null;
     }
 
     private MasterCategoryEntity updateMasterCategory(MasterCategoryRequest masterCategoryRequest,
@@ -85,7 +87,7 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
     }
 
     @Override
-    public MasterCategoryResponse getMasterCategoryById(Integer categoryId) {
+    public MasterCategoryResponse getMasterCategoryById(Integer categoryId) throws ResourceNotFoundException {
         Optional<MasterCategoryEntity> optionalMasterCategory =
                 masterCategoryRepository.findByIdAndIsDeleted(categoryId, Boolean.FALSE);
         if (optionalMasterCategory.isPresent()) {
@@ -94,7 +96,7 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
                     MasterCategoryResponse.class);
             return masterCategoryResponse;
         }
-        return null;
+        throw new ResourceNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND_MESSAGE + categoryId);
     }
 
     @Override

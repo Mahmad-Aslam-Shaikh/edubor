@@ -1,5 +1,6 @@
 package com.enotes_api.service;
 
+import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
 
@@ -13,7 +14,7 @@ public interface MasterCategoryService {
 
     List<MasterCategoryResponse> getActiveMasterCategories();
 
-    MasterCategoryResponse getMasterCategoryById(Integer categoryId);
+    MasterCategoryResponse getMasterCategoryById(Integer categoryId) throws ResourceNotFoundException;
 
     Boolean deleteMasterCategoryById(Integer categoryId);
 }
