@@ -4,8 +4,8 @@ import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
 import com.enotes_api.service.MasterCategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -27,7 +27,7 @@ public class MasterCategoryController {
     private MasterCategoryService masterCategoryService;
 
     @PostMapping
-    public ResponseEntity<MasterCategoryResponse> saveMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) {
+    public ResponseEntity<MasterCategoryResponse> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) {
         MasterCategoryResponse savedMasterCategoryResponse =
                 masterCategoryService.saveMasterCategory(masterCategoryRequest);
         return new ResponseEntity<>(savedMasterCategoryResponse, HttpStatus.CREATED);
@@ -52,6 +52,13 @@ public class MasterCategoryController {
             return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(masterCategory, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<MasterCategoryResponse> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException {
+        MasterCategoryResponse updatedMasterCategoryResponse =
+                masterCategoryService.updateMasterCategory(masterCategoryRequest);
+        return new ResponseEntity<>(updatedMasterCategoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{category-id}")

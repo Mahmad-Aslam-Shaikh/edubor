@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,33 +27,15 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
 
     @Override
     public MasterCategoryResponse saveMasterCategory(MasterCategoryRequest masterCategoryRequest) {
-        MasterCategoryEntity masterCategoryEntity = null;
-
-        if (!ObjectUtils.isEmpty(masterCategoryRequest.getId())) {
-            Optional<MasterCategoryEntity> optionalMasterCategory =
-                    masterCategoryRepository.findByIdAndIsDeleted(masterCategoryRequest.getId(), Boolean.FALSE);
-            if (optionalMasterCategory.isPresent()) {
-                MasterCategoryEntity masterCategory = optionalMasterCategory.get();
-                masterCategoryEntity = updateMasterCategory(masterCategoryRequest, masterCategory);
-            }
-        } else
-            masterCategoryEntity = modelMapper.map(masterCategoryRequest, MasterCategoryEntity.class);
-
-//		MasterCategoryEntity masterCategoryEntity = new MasterCategoryEntity();
-//		masterCategoryEntity.setName(masterCategoryRequest.getName());
-//		masterCategoryEntity.setDescription(masterCategoryRequest.getDescription());
-
-        if (masterCategoryEntity != null) {
-            masterCategoryEntity = masterCategoryRepository.save(masterCategoryEntity);
-            MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategoryEntity,
-                    MasterCategoryResponse.class);
-            return masterCategoryResponse;
-        }
-        return null;
+        MasterCategoryEntity masterCategoryEntity = modelMapper.map(masterCategoryRequest, MasterCategoryEntity.class);
+        masterCategoryEntity = masterCategoryRepository.save(masterCategoryEntity);
+        MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategoryEntity,
+                MasterCategoryResponse.class);
+        return masterCategoryResponse;
     }
 
-    private MasterCategoryEntity updateMasterCategory(MasterCategoryRequest masterCategoryRequest,
-                                                      MasterCategoryEntity masterCategoryEntity) {
+    public MasterCategoryEntity updateMasterCategory(MasterCategoryRequest masterCategoryRequest,
+                                                     MasterCategoryEntity masterCategoryEntity) {
         if (!ObjectUtils.isEmpty(masterCategoryRequest.getName()))
             masterCategoryEntity.setName(masterCategoryRequest.getName());
 
@@ -109,6 +90,31 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
             return deletedMasterCategory.getIsDeleted();
         }
         return Boolean.FALSE;
+    }
+
+    @Override
+    public MasterCategoryResponse updateMasterCategory(MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException {
+        Optional<MasterCategoryEntity> optionalMasterCategory =
+                masterCategoryRepository.findByIdAndIsDeleted(masterCategoryRequest.getId(), Boolean.FALSE);
+        if (optionalMasterCategory.isPresent()) {
+            MasterCategoryEntity masterCategory = optionalMasterCategory.get();
+
+            if (!ObjectUtils.isEmpty(masterCategoryRequest.getName()))
+                masterCategory.setName(masterCategoryRequest.getName());
+
+            if (!ObjectUtils.isEmpty(masterCategoryRequest.getDescription()))
+                masterCategory.setDescription(masterCategoryRequest.getDescription());
+
+            masterCategory.setUpdatedBy(1);
+            masterCategory.setUpdatedOn(LocalDateTime.now());
+
+            masterCategory = masterCategoryRepository.save(masterCategory);
+            MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategory,
+                    MasterCategoryResponse.class);
+            return masterCategoryResponse;
+        }
+        throw new ResourceNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND_MESSAGE + masterCategoryRequest.getId());
+
     }
 
 }
