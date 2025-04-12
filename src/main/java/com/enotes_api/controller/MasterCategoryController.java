@@ -4,6 +4,7 @@ import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
+import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.service.MasterCategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,47 +29,49 @@ public class MasterCategoryController {
     private MasterCategoryService masterCategoryService;
 
     @PostMapping
-    public ResponseEntity<MasterCategoryResponse> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
+    public ResponseEntity<?> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
         MasterCategoryResponse savedMasterCategoryResponse =
                 masterCategoryService.saveMasterCategory(masterCategoryRequest);
-        return new ResponseEntity<>(savedMasterCategoryResponse, HttpStatus.CREATED);
+        return ResponseUtils.createSuccessResponse(savedMasterCategoryResponse, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<MasterCategoryResponse>> getAllMasterCategories() {
+    public ResponseEntity<?> getAllMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getAllMasterCategories();
-        return new ResponseEntity<>(masterCategories, HttpStatus.OK);
+        return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<MasterCategoryResponse>> getActiveMasterCategories() {
+    public ResponseEntity<?> getActiveMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getActiveMasterCategories();
-        return new ResponseEntity<>(masterCategories, HttpStatus.OK);
+        return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
     @GetMapping("/{category-id}")
-    public ResponseEntity<Object> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
+    public ResponseEntity<?> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
         MasterCategoryResponse masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
         if (ObjectUtils.isEmpty(masterCategory)) {
-            return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);
+            return ResponseUtils.createFailureResponseWithMessage(HttpStatus.NOT_FOUND, "Category Not Found with id =" +
+                    " " + categoryId);
         }
-        return new ResponseEntity<>(masterCategory, HttpStatus.OK);
+        return ResponseUtils.createSuccessResponse(masterCategory, HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<MasterCategoryResponse> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
+    public ResponseEntity<?> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         MasterCategoryResponse updatedMasterCategoryResponse =
                 masterCategoryService.updateMasterCategory(masterCategoryRequest);
-        return new ResponseEntity<>(updatedMasterCategoryResponse, HttpStatus.OK);
+        return ResponseUtils.createSuccessResponse(updatedMasterCategoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{category-id}")
-    public ResponseEntity<String> deleteMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
+    public ResponseEntity<?> deleteMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
         Boolean isDeleted = masterCategoryService.deleteMasterCategoryById(categoryId);
         if (isDeleted) {
-            return new ResponseEntity<>("Category deleted Successfully", HttpStatus.OK);
+            return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Category deleted Successfully");
         }
-        return new ResponseEntity<>("Category Not Found with id = " + categoryId, HttpStatus.NOT_FOUND);
+        return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.NOT_FOUND,
+                "Category Not Found with id = " + categoryId);
     }
 
 }
