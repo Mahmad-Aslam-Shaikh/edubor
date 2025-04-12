@@ -1,5 +1,6 @@
 package com.enotes_api.exception;
 
+import com.enotes_api.response.ResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,21 +14,21 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(Exception exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseUtils.createFailureResponse(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<?> handleResourceAlreadyExistsException(ResourceAlreadyExistsException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.CONFLICT, exception.getMessage());
     }
 
 
