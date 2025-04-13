@@ -74,16 +74,11 @@ public class MasterCategoryServiceImpl implements MasterCategoryService {
     }
 
     @Override
-    public MasterCategoryResponse getMasterCategoryById(Integer categoryId) throws ResourceNotFoundException {
-        Optional<MasterCategoryEntity> optionalMasterCategory =
-                masterCategoryRepository.findByIdAndIsDeleted(categoryId, Boolean.FALSE);
-        if (optionalMasterCategory.isPresent()) {
-            MasterCategoryEntity masterCategory = optionalMasterCategory.get();
-            MasterCategoryResponse masterCategoryResponse = modelMapper.map(masterCategory,
-                    MasterCategoryResponse.class);
-            return masterCategoryResponse;
-        }
-        throw new ResourceNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND_MESSAGE + categoryId);
+    public MasterCategoryEntity getMasterCategoryById(Integer categoryId) throws ResourceNotFoundException {
+
+        return masterCategoryRepository
+                .findByIdAndIsDeleted(categoryId, Boolean.FALSE)
+                .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.CATEGORY_NOT_FOUND_MESSAGE + categoryId));
     }
 
     @Override
