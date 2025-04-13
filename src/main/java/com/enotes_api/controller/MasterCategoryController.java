@@ -1,11 +1,13 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.MasterCategoryRequest;
 import com.enotes_api.response.MasterCategoryResponse;
 import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.service.MasterCategoryService;
+import com.enotes_api.utility.MapperUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,8 @@ public class MasterCategoryController {
 
     private MasterCategoryService masterCategoryService;
 
+    private MapperUtil mapperUtil;
+
     @PostMapping
     public ResponseEntity<?> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
         MasterCategoryResponse savedMasterCategoryResponse =
@@ -49,12 +53,13 @@ public class MasterCategoryController {
 
     @GetMapping("/{category-id}")
     public ResponseEntity<?> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
-        MasterCategoryResponse masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
-        if (ObjectUtils.isEmpty(masterCategory)) {
+        MasterCategoryEntity masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
+        MasterCategoryResponse masterCategoryResponse = mapperUtil.map(masterCategory, MasterCategoryResponse.class);
+        if (ObjectUtils.isEmpty(masterCategoryResponse)) {
             return ResponseUtils.createFailureResponseWithMessage(HttpStatus.NOT_FOUND, "Category Not Found with id =" +
                     " " + categoryId);
         }
-        return ResponseUtils.createSuccessResponse(masterCategory, HttpStatus.OK);
+        return ResponseUtils.createSuccessResponse(masterCategoryResponse, HttpStatus.OK);
     }
 
     @PutMapping

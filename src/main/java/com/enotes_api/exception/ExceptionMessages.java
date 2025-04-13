@@ -7,4 +7,7 @@ public class ExceptionMessages {
 
     public static String CATEGORY_ALREADY_EXISTS_MESSAGE = "Category already exists";
 
+    // Notes Related Exception Messages
+    public static String NOTES_NOT_FOUND_MESSAGE = "Notes Not Found With ID = ";
+
 }
