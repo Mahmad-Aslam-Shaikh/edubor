@@ -9,12 +9,17 @@ import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.NotesRepository;
 import com.enotes_api.request.NotesRequest;
+import com.enotes_api.response.NotesPaginationResponse;
 import com.enotes_api.response.NotesResponse;
 import com.enotes_api.service.FileService;
 import com.enotes_api.service.MasterCategoryService;
 import com.enotes_api.service.NotesService;
 import com.enotes_api.utility.MapperUtil;
+import com.enotes_api.utility.PageUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,5 +74,33 @@ public class NotesServiceImpl implements NotesService {
         List<NotesEntity> allNotes = notesRepository.findAll();
         return mapperUtil.mapList(allNotes, NotesResponse.class);
 
+    }
+
+    @Override
+    public NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, PageUtil.pageSize);
+        Page<NotesEntity> userNotes = notesRepository.findByCreatedBy(userId, pageable);
+
+        long totalElements = userNotes.getTotalElements();
+        int totalPages = userNotes.getTotalPages();
+        int pageNum = userNotes.getNumber();
+        int pageSize = userNotes.getSize();
+        boolean isEmpty = userNotes.isEmpty();
+        boolean isFirstPage = userNotes.isFirst();
+        boolean isLastPage = userNotes.isLast();
+
+        List<NotesEntity> paginatedUserNotes = userNotes.getContent();
+        List<NotesResponse> paginatedNotesResponse = mapperUtil.mapList(paginatedUserNotes, NotesResponse.class);
+
+        return NotesPaginationResponse.builder()
+                .notes(paginatedNotesResponse)
+                .pageNo(pageNum)
+                .pageSize(pageSize)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .isPageEmpty(isEmpty)
+                .isFirstPage(isFirstPage)
+                .isLastPage(isLastPage)
+                .build();
     }
 }

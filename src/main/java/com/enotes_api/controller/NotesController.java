@@ -5,6 +5,7 @@ import com.enotes_api.exception.FileUploadFailedException;
 import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.NotesRequest;
+import com.enotes_api.response.NotesPaginationResponse;
 import com.enotes_api.response.NotesResponse;
 import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.service.NotesService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,5 +54,13 @@ public class NotesController {
         List<NotesResponse> allNotes = notesService.getAllNotes();
         return ResponseUtils.createSuccessResponse(allNotes, HttpStatus.OK);
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getUserNotesWithPagination(Integer userId, @RequestParam(name = "pageNo", defaultValue =
+            "0") Integer pageNo) {
+        NotesPaginationResponse userNotesWithPagination = notesService.getUserNotesWithPagination(1, pageNo);
+        return ResponseUtils.createSuccessResponse(userNotesWithPagination, HttpStatus.OK);
+    }
+
 
 }
