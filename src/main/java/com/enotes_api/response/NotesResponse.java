@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Data
 public class NotesResponse {
 
@@ -16,6 +18,8 @@ public class NotesResponse {
     private String description;
 
     private MasterCategoryResponse category;
+
+    private List<FileResponse> files;
 
     @AllArgsConstructor
     @NoArgsConstructor
