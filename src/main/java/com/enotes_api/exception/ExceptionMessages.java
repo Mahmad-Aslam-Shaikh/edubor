@@ -17,4 +17,8 @@ public class ExceptionMessages {
 
     public static String UNSUPPORTED_FILE_EXTENSION_MESSAGE = "Unsupported file extension: ";
 
+    public static String FILE_NOT_EXISTS_MESSAGE = "Requested file not found";
+
+    public static final String UNABLE_TO_PROCESS_FILE = "Unable to process file";
+
 }
