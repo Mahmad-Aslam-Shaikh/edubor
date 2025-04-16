@@ -31,5 +31,10 @@ public class GlobalExceptionHandler {
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.CONFLICT, exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidFileException.class)
+    public ResponseEntity<?> handleInvalidFileException(InvalidFileException exception) {
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
 
 }

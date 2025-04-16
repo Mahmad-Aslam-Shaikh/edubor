@@ -1,15 +1,19 @@
 package com.enotes_api.service;
 
 import com.enotes_api.entity.NotesEntity;
+import com.enotes_api.exception.FileUploadFailedException;
+import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.NotesRequest;
 import com.enotes_api.response.NotesResponse;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface NotesService {
 
-    NotesResponse saveNotes(NotesRequest notesRequest) throws ResourceNotFoundException;
+    NotesResponse saveNotes(NotesRequest notesRequest, List<MultipartFile> files) throws ResourceNotFoundException, FileUploadFailedException, IOException, InvalidFileException;
 
     NotesEntity getNotesById(Integer notesId) throws ResourceNotFoundException;
 

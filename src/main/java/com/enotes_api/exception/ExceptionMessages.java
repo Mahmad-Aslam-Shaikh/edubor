@@ -10,4 +10,11 @@ public class ExceptionMessages {
     // Notes Related Exception Messages
     public static String NOTES_NOT_FOUND_MESSAGE = "Notes Not Found With ID = ";
 
+    //File Related Exception Messages
+    public static String FILE_EXTENSION_MISSING_MESSAGE = "File must have an extension.";
+
+    public static String INVALID_FILE_NAME_MESSAGE = "Invalid file name format. File name should contain only one dot.";
+
+    public static String UNSUPPORTED_FILE_EXTENSION_MESSAGE = "Unsupported file extension: ";
+
 }
