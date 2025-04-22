@@ -26,6 +26,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +66,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesEntity getNotesById(Integer notesId) throws ResourceNotFoundException {
-        return notesRepository.findById(notesId)
+    public NotesEntity getNotesById(Integer notesId, Boolean isDeleted) throws ResourceNotFoundException {
+        return (NotesEntity) notesRepository.findNonDeletedNoteById(notesId, isDeleted)
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.NOTES_NOT_FOUND_MESSAGE + notesId));
     }
 
@@ -80,7 +81,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo) {
         Pageable pageable = PageRequest.of(pageNo, PageUtil.pageSize);
-        Page<NotesEntity> userNotes = notesRepository.findByCreatedBy(userId, pageable);
+        Page<NotesEntity> userNotes = notesRepository.getNonDeletedUserNotes(userId, pageable);
 
         long totalElements = userNotes.getTotalElements();
         int totalPages = userNotes.getTotalPages();
@@ -108,7 +109,7 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public NotesResponse updateNotes(Integer notesId, NotesRequest notesRequest, List<MultipartFile> files)
             throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
-        NotesEntity notesToBeUpdated = getNotesById(notesId);
+        NotesEntity notesToBeUpdated = getNotesById(notesId, Boolean.FALSE);
 
         if (notesRequest != null) {
             if (!ObjectUtils.isEmpty(notesRequest.getCategory())) {
@@ -141,6 +142,34 @@ public class NotesServiceImpl implements NotesService {
         notesToBeUpdated = notesRepository.save(notesToBeUpdated);
         return mapperUtil.map(notesToBeUpdated, NotesResponse.class);
 
+    }
+
+    @Override
+    public NotesResponse deleteNotes(Integer notesId) throws ResourceNotFoundException {
+        NotesEntity notesToDelete = getNotesById(notesId, Boolean.FALSE);
+
+        notesToDelete.setIsDeleted(Boolean.TRUE);
+        notesToDelete.setDeletedOn(LocalDateTime.now());
+
+        NotesEntity deletedNote = notesRepository.save(notesToDelete);
+        return mapperUtil.map(deletedNote, NotesResponse.class);
+    }
+
+    @Override
+    public NotesResponse restoreNotes(Integer notesId) throws ResourceNotFoundException {
+        NotesEntity notesToRestore = getNotesById(notesId, Boolean.TRUE);
+
+        notesToRestore.setIsDeleted(Boolean.FALSE);
+        notesToRestore.setDeletedOn(null);
+
+        NotesEntity restoredNote = notesRepository.save(notesToRestore);
+        return mapperUtil.map(restoredNote, NotesResponse.class);
+
+    }
+
+    @Override
+    public List<NotesEntity> getUserNotesInRecycleBin(Integer userId) {
+        return notesRepository.findByCreatedByAndIsDeleted(userId, Boolean.TRUE);
     }
 
 }

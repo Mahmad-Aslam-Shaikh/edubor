@@ -17,11 +17,17 @@ public interface NotesService {
     NotesResponse saveNotes(NotesRequest notesRequest, List<MultipartFile> files) throws ResourceNotFoundException,
             FileUploadFailedException, IOException, InvalidFileException;
 
-    NotesEntity getNotesById(Integer notesId) throws ResourceNotFoundException;
+    NotesEntity getNotesById(Integer notesId, Boolean isDeleted) throws ResourceNotFoundException;
 
     List<NotesResponse> getAllNotes();
 
     NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo);
 
     NotesResponse updateNotes(Integer notesId, NotesRequest notesRequest, List<MultipartFile> files) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
+
+    NotesResponse deleteNotes(Integer notesId) throws ResourceNotFoundException;
+
+    NotesResponse restoreNotes(Integer notesId) throws ResourceNotFoundException;
+
+    List<NotesEntity> getUserNotesInRecycleBin(Integer userId);
 }
