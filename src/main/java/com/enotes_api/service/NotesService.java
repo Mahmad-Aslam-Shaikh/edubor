@@ -23,4 +23,5 @@ public interface NotesService {
 
     NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo);
 
+    NotesResponse updateNotes(Integer notesId, NotesRequest notesRequest, List<MultipartFile> files) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
 }

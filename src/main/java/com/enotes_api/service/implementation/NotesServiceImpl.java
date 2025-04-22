@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -103,4 +104,43 @@ public class NotesServiceImpl implements NotesService {
                 .isLastPage(isLastPage)
                 .build();
     }
+
+    @Override
+    public NotesResponse updateNotes(Integer notesId, NotesRequest notesRequest, List<MultipartFile> files)
+            throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+        NotesEntity notesToBeUpdated = getNotesById(notesId);
+
+        if (notesRequest != null) {
+            if (!ObjectUtils.isEmpty(notesRequest.getCategory())) {
+                MasterCategoryEntity masterCategory =
+                        masterCategoryService.getMasterCategoryById(notesRequest.getCategory().getId());
+                notesToBeUpdated.setCategory(masterCategory);
+            }
+
+            if (!ObjectUtils.isEmpty(notesRequest.getTitle()))
+                notesToBeUpdated.setTitle(notesRequest.getTitle());
+
+            if (!ObjectUtils.isEmpty(notesRequest.getDescription()))
+                notesToBeUpdated.setDescription(notesRequest.getDescription());
+        }
+
+        if (!CollectionUtils.isEmpty(files)) {
+            List<FileEntity> fileEntities = notesToBeUpdated.getFiles();
+
+            if (fileEntities == null) {
+                fileEntities = new ArrayList<>();
+                notesToBeUpdated.setFiles(fileEntities);
+            }
+
+            for (MultipartFile file : files) {
+                FileEntity fileEntity = fileService.saveFile(file);
+                fileEntities.add(fileEntity);
+            }
+        }
+
+        notesToBeUpdated = notesRepository.save(notesToBeUpdated);
+        return mapperUtil.map(notesToBeUpdated, NotesResponse.class);
+
+    }
+
 }
