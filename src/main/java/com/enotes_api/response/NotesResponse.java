@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,6 +21,11 @@ public class NotesResponse {
     private MasterCategoryResponse category;
 
     private List<FileResponse> files;
+
+    private Boolean isDeleted;
+
+    private LocalDateTime deletedOn;
+
 
     @AllArgsConstructor
     @NoArgsConstructor

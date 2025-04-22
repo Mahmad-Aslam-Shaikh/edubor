@@ -13,6 +13,7 @@ import com.enotes_api.utility.MapperUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,7 +46,7 @@ public class NotesController {
 
     @GetMapping("/{notes-id}")
     public ResponseEntity<?> getNotesById(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
-        NotesEntity notesEntity = notesService.getNotesById(notesId);
+        NotesEntity notesEntity = notesService.getNotesById(notesId, Boolean.FALSE);
         NotesResponse notesResponse = mapperUtil.map(notesEntity, NotesResponse.class);
         return ResponseUtils.createSuccessResponse(notesResponse, HttpStatus.OK);
     }
@@ -72,5 +73,27 @@ public class NotesController {
         return ResponseUtils.createSuccessResponse(updatedNotesResponse, HttpStatus.OK);
     }
 
+    @PutMapping("/delete/{notes-id}")
+    public ResponseEntity<?> deleteNotes(@PathVariable(name = "notes-id") Integer notesId)
+            throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+        NotesResponse deletedNote = notesService.deleteNotes(notesId);
+        return ResponseUtils.createSuccessResponse(deletedNote, HttpStatus.OK);
+    }
+
+    @PutMapping("/restore/{notes-id}")
+    public ResponseEntity<?> restoreNotes(@PathVariable(name = "notes-id") Integer notesId)
+            throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+        NotesResponse deletedNote = notesService.restoreNotes(notesId);
+        return ResponseUtils.createSuccessResponse(deletedNote, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/bin")
+    public ResponseEntity<?> getUserNotesInRecycleBin(Integer userId) {
+        List<NotesEntity> userNotesInRecycleBin = notesService.getUserNotesInRecycleBin(1);
+        List<NotesResponse> userNotesInBinResponse = mapperUtil.mapList(userNotesInRecycleBin, NotesResponse.class);
+        if (CollectionUtils.isEmpty(userNotesInBinResponse))
+            return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Recycle bin is empty");
+        return ResponseUtils.createSuccessResponse(userNotesInBinResponse, HttpStatus.OK);
+    }
 
 }
