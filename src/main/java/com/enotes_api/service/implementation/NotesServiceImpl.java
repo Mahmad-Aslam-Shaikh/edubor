@@ -172,4 +172,34 @@ public class NotesServiceImpl implements NotesService {
         return notesRepository.findByCreatedByAndIsDeleted(userId, Boolean.TRUE);
     }
 
+    @Override
+    public void deleteOutDatedNotesFromBin(LocalDateTime previousDateTime) {
+        List<NotesEntity> outDatedDeletedNotes =
+                notesRepository.findAllByIsDeletedTrueAndDeletedOnBefore(previousDateTime);
+        if (!CollectionUtils.isEmpty(outDatedDeletedNotes))
+            notesRepository.deleteAll(outDatedDeletedNotes);
+    }
+
+    @Override
+    public boolean deleteNotesFromRecycleBin(Integer notesId) {
+        NotesEntity notesInBin = null;
+        try {
+            notesInBin = getNotesById(notesId, Boolean.TRUE);
+        } catch (ResourceNotFoundException exception) {
+            return Boolean.FALSE;
+        }
+        notesRepository.delete(notesInBin);
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public boolean emptyUserRecycleBin(Integer userId) {
+        List<NotesEntity> userNotesInBin = notesRepository.findAllByIsDeletedTrueAndCreatedBy(userId);
+        if (!CollectionUtils.isEmpty(userNotesInBin)) {
+            notesRepository.deleteAll(userNotesInBin);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
 }

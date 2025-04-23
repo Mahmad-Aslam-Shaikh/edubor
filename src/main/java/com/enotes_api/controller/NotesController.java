@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,5 +96,26 @@ public class NotesController {
             return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Recycle bin is empty");
         return ResponseUtils.createSuccessResponse(userNotesInBinResponse, HttpStatus.OK);
     }
+
+    @DeleteMapping("/bin/{notes-id}")
+    public ResponseEntity<?> deleteNoteFromRecycleBin(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
+        boolean isNoteDeletedFromBin = notesService.deleteNotesFromRecycleBin(notesId);
+        if (isNoteDeletedFromBin) {
+            return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Note deleted permanently");
+        }
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.CONFLICT, "First please move the notes to " +
+                "Recycle Bin");
+    }
+
+    @DeleteMapping("/bin/empty")
+    public ResponseEntity<?> emptyNotesRecycleBin() {
+        Integer userId = 1;
+        boolean isRecycleBinMadeEmpty = notesService.emptyUserRecycleBin(userId);
+        if (isRecycleBinMadeEmpty) {
+            return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Recycle Bin Successfully Made Empty");
+        }
+        return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.CONFLICT, "Recycle Bin is already Empty");
+    }
+
 
 }
