@@ -10,6 +10,7 @@ import com.enotes_api.response.NotesResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface NotesService {
@@ -30,4 +31,10 @@ public interface NotesService {
     NotesResponse restoreNotes(Integer notesId) throws ResourceNotFoundException;
 
     List<NotesEntity> getUserNotesInRecycleBin(Integer userId);
+
+    void deleteOutDatedNotesFromBin(LocalDateTime previousDateTime);
+
+    boolean deleteNotesFromRecycleBin(Integer notesId) throws ResourceNotFoundException;
+
+    boolean emptyUserRecycleBin(Integer userId);
 }
