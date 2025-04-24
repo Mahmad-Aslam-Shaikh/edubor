@@ -21,4 +21,8 @@ public class ExceptionMessages {
 
     public static final String UNABLE_TO_PROCESS_FILE = "Unable to process file";
 
+    // To Do Related Exception Messages
+
+    public static String TODO_NOT_FOUND_MESSAGE = "Todo Not Found With ID = ";
+
 }
