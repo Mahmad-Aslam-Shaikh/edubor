@@ -1,5 +1,6 @@
 package com.enotes_api.service.implementation;
 
+import com.enotes_api.entity.FavoriteNotesPKs;
 import com.enotes_api.entity.FileEntity;
 import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.entity.NotesEntity;
@@ -7,6 +8,7 @@ import com.enotes_api.exception.ExceptionMessages;
 import com.enotes_api.exception.FileUploadFailedException;
 import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;
+import com.enotes_api.repository.FavoriteNotesRepository;
 import com.enotes_api.repository.NotesRepository;
 import com.enotes_api.request.NotesRequest;
 import com.enotes_api.response.NotesPaginationResponse;
@@ -35,6 +37,8 @@ import java.util.List;
 public class NotesServiceImpl implements NotesService {
 
     private NotesRepository notesRepository;
+
+    private FavoriteNotesRepository favoriteNotesRepository;
 
     private MasterCategoryService masterCategoryService;
 
@@ -187,6 +191,13 @@ public class NotesServiceImpl implements NotesService {
             notesInBin = getNotesById(notesId, Boolean.TRUE);
         } catch (ResourceNotFoundException exception) {
             return Boolean.FALSE;
+        }
+
+        if (!ObjectUtils.isEmpty(notesInBin)) {
+            FavoriteNotesPKs favNotesKey = new FavoriteNotesPKs(notesInBin.getCreatedBy(), notesId);
+            if (favoriteNotesRepository.existsById(favNotesKey)) {
+                favoriteNotesRepository.deleteByIdNoteId(notesId);
+            }
         }
         notesRepository.delete(notesInBin);
         return Boolean.TRUE;
