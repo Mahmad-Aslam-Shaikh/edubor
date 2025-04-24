@@ -9,8 +9,6 @@ import lombok.Setter;
 @Data
 public class NotesRequest {
 
-    private Integer id;
-
     private String title;
 
     private String description;

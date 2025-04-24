@@ -117,5 +117,11 @@ public class NotesController {
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.CONFLICT, "Recycle Bin is already Empty");
     }
 
+    @PostMapping("/copy/{notes-id}")
+    public ResponseEntity<?> copyNotes(@PathVariable(name = "notes-id") Integer notesId)
+            throws ResourceNotFoundException, FileUploadFailedException, IOException, InvalidFileException {
+        NotesResponse notesResponse = notesService.copyNotes(notesId);
+        return ResponseUtils.createSuccessResponse(notesResponse, HttpStatus.CREATED);
+    }
 
 }
