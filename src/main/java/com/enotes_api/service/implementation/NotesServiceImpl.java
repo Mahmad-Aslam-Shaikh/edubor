@@ -213,4 +213,11 @@ public class NotesServiceImpl implements NotesService {
         return Boolean.FALSE;
     }
 
+    @Override
+    public NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+        NotesEntity notesToCopy = getNotesById(notesId, Boolean.FALSE);
+        NotesRequest noteRequest = mapperUtil.map(notesToCopy, NotesRequest.class);
+        return saveNotes(noteRequest, null);
+    }
+
 }

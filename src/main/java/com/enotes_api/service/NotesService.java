@@ -37,4 +37,6 @@ public interface NotesService {
     boolean deleteNotesFromRecycleBin(Integer notesId) throws ResourceNotFoundException;
 
     boolean emptyUserRecycleBin(Integer userId);
+
+    NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
 }
