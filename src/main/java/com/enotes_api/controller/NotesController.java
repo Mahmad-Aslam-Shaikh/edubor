@@ -83,7 +83,7 @@ public class NotesController {
 
     @PutMapping("/restore/{notes-id}")
     public ResponseEntity<?> restoreNotes(@PathVariable(name = "notes-id") Integer notesId)
-            throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+            throws ResourceNotFoundException {
         NotesResponse deletedNote = notesService.restoreNotes(notesId);
         return ResponseUtils.createSuccessResponse(deletedNote, HttpStatus.OK);
     }

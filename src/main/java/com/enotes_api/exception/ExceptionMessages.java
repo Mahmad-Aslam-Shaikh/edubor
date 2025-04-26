@@ -22,7 +22,13 @@ public class ExceptionMessages {
     public static final String UNABLE_TO_PROCESS_FILE = "Unable to process file";
 
     // To Do Related Exception Messages
-
     public static String TODO_NOT_FOUND_MESSAGE = "Todo Not Found With ID = ";
+
+    // Role Related Exception Messages
+    public static String ROLE_NOT_FOUND_MESSAGE = "Role Not Found With ID = ";
+
+    public static String ROLE_ALREADY_EXISTS_MESSAGE = "Role already exists";
+
+    public static String SOME_ROLE_NOT_FOUND_MESSAGE = "One or more roles not found.";
 
 }
