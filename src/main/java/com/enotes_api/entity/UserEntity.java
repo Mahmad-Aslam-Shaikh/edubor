@@ -8,12 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -41,12 +42,12 @@ public class UserEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles = new HashSet<>();
 
 }

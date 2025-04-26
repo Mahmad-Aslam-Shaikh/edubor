@@ -17,7 +17,7 @@ public interface RoleService {
 
     RoleEntity findRoleByName(String roleName);
 
-    List<RoleEntity> getSpecifiedRoles(Set<Integer> roles) throws ResourceNotFoundException;
+    Set<RoleEntity> getSpecifiedRoles(Set<Integer> roles) throws ResourceNotFoundException;
 
     List<RoleResponse> getAllRoles();
 

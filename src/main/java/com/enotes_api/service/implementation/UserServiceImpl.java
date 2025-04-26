@@ -2,6 +2,8 @@ package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.RoleEntity;
 import com.enotes_api.entity.UserEntity;
+import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.UserRepository;
 import com.enotes_api.request.UserRequest;
@@ -13,7 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -26,13 +28,27 @@ public class UserServiceImpl implements UserService {
     private MapperUtil mapperUtil;
 
     @Override
-    public UserResponse registerUser(UserRequest userRequest) throws ResourceNotFoundException {
+    public UserResponse registerUser(UserRequest userRequest) throws ResourceNotFoundException,
+            ResourceAlreadyExistsException {
+        boolean isEmailRegistered = userRepository.existsByEmail(userRequest.getEmail());
+        if (isEmailRegistered)
+            throw new ResourceAlreadyExistsException(ExceptionMessages.USER_EMAIL_ALREADY_EXISTS_MESSAGE);
+
+        boolean isMobileNoExists = userRepository.existsByMobileNo(userRequest.getMobileNo());
+        if (isMobileNoExists)
+            throw new ResourceAlreadyExistsException(ExceptionMessages.MOBILE_ALREADY_EXISTS_MESSAGE);
+
         UserEntity userEntity = mapperUtil.map(userRequest, UserEntity.class);
         if (!ObjectUtils.isEmpty(userRequest.getRoleIds())) {
-            List<RoleEntity> specifiedRoles = roleService.getSpecifiedRoles(userRequest.getRoleIds());
+            Set<RoleEntity> specifiedRoles = roleService.getSpecifiedRoles(userRequest.getRoleIds());
             userEntity.setRoles(specifiedRoles);
         }
         UserEntity savedUser = userRepository.save(userEntity);
         return mapperUtil.map(savedUser, UserResponse.class);
     }
+
+    /*
+     * TODO: Write supporting service methods for pending APIs of UserController
+     */
+
 }
