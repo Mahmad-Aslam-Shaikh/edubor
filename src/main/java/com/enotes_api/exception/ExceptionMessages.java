@@ -31,4 +31,9 @@ public class ExceptionMessages {
 
     public static String SOME_ROLE_NOT_FOUND_MESSAGE = "One or more roles not found.";
 
+    // User Related Exception Messages
+    public static String USER_EMAIL_ALREADY_EXISTS_MESSAGE = "Email already registered";
+
+    public static String MOBILE_ALREADY_EXISTS_MESSAGE = "Mobile already exists";
+
 }

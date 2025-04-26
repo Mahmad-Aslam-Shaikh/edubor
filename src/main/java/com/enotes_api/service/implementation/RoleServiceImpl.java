@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +47,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RoleEntity> getSpecifiedRoles(Set<Integer> roleIds) throws ResourceNotFoundException {
-        List<RoleEntity> requiredRoles = roleRepository.findAllById(roleIds);
+    public Set<RoleEntity> getSpecifiedRoles(Set<Integer> roleIds) throws ResourceNotFoundException {
+        Set<RoleEntity> requiredRoles = new HashSet<>(roleRepository.findAllById(roleIds));
 
         if (requiredRoles.size() != roleIds.size())
             throw new ResourceNotFoundException(ExceptionMessages.SOME_ROLE_NOT_FOUND_MESSAGE);
