@@ -3,7 +3,7 @@ package com.enotes_api.service.implementation;
 import com.enotes_api.entity.FavoriteNotesEntity;
 import com.enotes_api.entity.FavoriteNotesPKs;
 import com.enotes_api.entity.NotesEntity;
-import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.FavoriteNotesRepository;
 import com.enotes_api.service.FavoriteNotesService;

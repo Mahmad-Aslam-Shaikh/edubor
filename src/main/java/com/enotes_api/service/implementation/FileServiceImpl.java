@@ -1,7 +1,7 @@
 package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.FileEntity;
-import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.exception.FileUploadFailedException;
 import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;

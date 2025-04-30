@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.UserRequest;
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest) throws ResourceNotFoundException,
-            ResourceAlreadyExistsException {
+            ResourceAlreadyExistsException, EmailException {
         UserResponse userResponse = userService.registerUser(userRequest);
         return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.CREATED);
     }
