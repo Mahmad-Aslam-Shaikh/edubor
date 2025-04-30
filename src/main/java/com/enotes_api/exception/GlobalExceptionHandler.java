@@ -36,5 +36,10 @@ public class GlobalExceptionHandler {
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<?> handleEmailException(EmailException exception) {
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
 
 }

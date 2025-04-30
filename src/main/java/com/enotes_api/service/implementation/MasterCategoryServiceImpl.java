@@ -1,7 +1,7 @@
 package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.MasterCategoryEntity;
-import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.MasterCategoryRepository;

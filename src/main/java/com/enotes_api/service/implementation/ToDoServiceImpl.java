@@ -2,7 +2,7 @@ package com.enotes_api.service.implementation;
 
 import com.enotes_api.entity.ToDoEntity;
 import com.enotes_api.enums.ToDoStatusEnum;
-import com.enotes_api.exception.ExceptionMessages;
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.ToDoRepository;
 import com.enotes_api.request.ToDoRequest;
