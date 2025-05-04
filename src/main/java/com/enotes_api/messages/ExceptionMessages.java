@@ -36,7 +36,14 @@ public class ExceptionMessages {
 
     public static final String MOBILE_ALREADY_EXISTS_MESSAGE = "Mobile already exists";
 
-    // User Related Exception Messages
+    public static final String USER_NOT_FOUND_MESSAGE = "User Not Found With ID = ";
+
+    public static final String USER_VERIFICATION_LINK_INVALID = "Invalid verification link";
+
+    public static final String USER_ALREADY_VERIFIED = "User already verified";
+
+    // Email Related Exception Messages
     public static final String UNABLE_TO_SEND_EMAIL = "Error sending email for the action.";
+
 
 }
