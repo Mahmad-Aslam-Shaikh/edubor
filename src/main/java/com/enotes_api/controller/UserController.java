@@ -1,5 +1,7 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.constants.RouteConstants;
+import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
@@ -7,28 +9,42 @@ import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.response.UserResponse;
 import com.enotes_api.service.UserService;
+import com.enotes_api.utility.MapperUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping(RouteConstants.USER)
 @AllArgsConstructor
 public class UserController {
 
     private UserService userService;
 
+    private MapperUtil mapperUtil;
+
     @PostMapping
-    public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest) throws ResourceNotFoundException,
+    public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest, HttpServletRequest request) throws ResourceNotFoundException,
             ResourceAlreadyExistsException, EmailException {
-        UserResponse userResponse = userService.registerUser(userRequest);
+        UserResponse userResponse = userService.registerUser(userRequest, request);
         return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{user-id}")
+    public ResponseEntity<?> getUserById(@PathVariable(name = "user-id") Integer userId) throws ResourceNotFoundException {
+        UserEntity userEntity = userService.getUserById(userId);
+        UserResponse userResponse = mapperUtil.map(userEntity, UserResponse.class);
+        return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.OK);
+    }
+
 
     /*
      * TODO: Write APIs for CRUD operation
