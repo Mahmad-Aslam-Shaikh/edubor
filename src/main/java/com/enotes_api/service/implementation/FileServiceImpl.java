@@ -94,7 +94,7 @@ public class FileServiceImpl implements FileService {
         if (directory.exists()) {
             return new UrlResource(directory.toURI());
         }
-        throw new ResourceNotFoundException(ExceptionMessages.UNABLE_TO_PROCESS_FILE);
+        throw new ResourceNotFoundException(ExceptionMessages.UNABLE_TO_PROCESS_FILE_MESSAGE);
     }
 
 

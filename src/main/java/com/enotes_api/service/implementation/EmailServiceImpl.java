@@ -49,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
         } catch (MessagingException | MailException | UnsupportedEncodingException e) {
             System.out.println(e.getClass());
-            throw new EmailException(ExceptionMessages.UNABLE_TO_SEND_EMAIL);
+            throw new EmailException(ExceptionMessages.UNABLE_TO_SEND_EMAIL_MESSAGE);
         }
     }
 

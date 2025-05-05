@@ -19,7 +19,7 @@ public class ExceptionMessages {
 
     public static final String FILE_NOT_EXISTS_MESSAGE = "Requested file not found";
 
-    public static final String UNABLE_TO_PROCESS_FILE = "Unable to process file";
+    public static final String UNABLE_TO_PROCESS_FILE_MESSAGE = "Unable to process file";
 
     // To Do Related Exception Messages
     public static final String TODO_NOT_FOUND_MESSAGE = "Todo Not Found With ID = ";
@@ -38,12 +38,14 @@ public class ExceptionMessages {
 
     public static final String USER_NOT_FOUND_MESSAGE = "User Not Found With ID = ";
 
-    public static final String USER_VERIFICATION_LINK_INVALID = "Invalid verification link";
+    public static final String USER_NOT_FOUND_WITH_EMAIL_MESSAGE = "User Not Found With email = ";
 
-    public static final String USER_ALREADY_VERIFIED = "User already verified";
+    public static final String USER_VERIFICATION_LINK_INVALID_MESSAGE = "Invalid verification link";
+
+    public static final String USER_ALREADY_VERIFIED_MESSAGE = "User already verified";
 
     // Email Related Exception Messages
-    public static final String UNABLE_TO_SEND_EMAIL = "Error sending email for the action.";
+    public static final String UNABLE_TO_SEND_EMAIL_MESSAGE = "Error sending email for the action.";
 
 
 }
