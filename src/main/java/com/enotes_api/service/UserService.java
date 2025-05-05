@@ -19,4 +19,6 @@ public interface UserService {
 
     UserEntity verifyUser(Integer userId, String verificationCode) throws ResourceNotFoundException, InvalidVerificationLinkException, ResourceAlreadyVerifiedException;
 
+    UserEntity getUserByEmail(String email) throws ResourceNotFoundException;
+
 }

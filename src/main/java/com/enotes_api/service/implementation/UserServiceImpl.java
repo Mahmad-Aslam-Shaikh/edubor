@@ -79,16 +79,22 @@ public class UserServiceImpl implements UserService {
         UserAccountVerificationEntity userVerificationDetails = unVerifiedUser.getUserVerificationStatus();
 
         if (unVerifiedUser.getIsActive() || ObjectUtils.isEmpty(userVerificationDetails))
-            throw new ResourceAlreadyVerifiedException(ExceptionMessages.USER_ALREADY_VERIFIED);
+            throw new ResourceAlreadyVerifiedException(ExceptionMessages.USER_ALREADY_VERIFIED_MESSAGE);
 
         if (userVerificationDetails.getVerificationCode().equals(verificationCode))
             unVerifiedUser.setIsActive(Boolean.TRUE);
         else
-            throw new InvalidVerificationLinkException(ExceptionMessages.USER_VERIFICATION_LINK_INVALID);
+            throw new InvalidVerificationLinkException(ExceptionMessages.USER_VERIFICATION_LINK_INVALID_MESSAGE);
 
         unVerifiedUser.setUserVerificationStatus(null);
 
         return userRepository.save(unVerifiedUser);
+    }
+
+    @Override
+    public UserEntity getUserByEmail(String email) throws ResourceNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_EMAIL_MESSAGE + email));
     }
 
     /*
