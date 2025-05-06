@@ -3,6 +3,7 @@ package com.enotes_api.exception;
 import com.enotes_api.response.ResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,6 +49,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceAlreadyVerifiedException.class)
     public ResponseEntity<?> handleResourceAlreadyVerifiedException(ResourceAlreadyVerifiedException exception) {
+        return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException exception) {
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 

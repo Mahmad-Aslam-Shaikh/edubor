@@ -5,7 +5,9 @@ import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
+import com.enotes_api.request.LoginRequest;
 import com.enotes_api.request.UserRequest;
+import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.response.UserResponse;
 import com.enotes_api.service.UserService;
@@ -15,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +48,13 @@ public class UserController {
         return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.OK);
     }
 
+    @PostMapping(RouteConstants.LOGIN)
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        LoginResponse loginResponse = userService.logIn(loginRequest);
+        if (!ObjectUtils.isEmpty(loginResponse))
+            return ResponseUtils.createSuccessResponse(loginResponse, HttpStatus.OK);
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "Invalid Credentials");
+    }
 
     /*
      * TODO: Write APIs for CRUD operation

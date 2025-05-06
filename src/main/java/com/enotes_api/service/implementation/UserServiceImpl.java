@@ -10,14 +10,21 @@ import com.enotes_api.exception.ResourceAlreadyVerifiedException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.repository.UserRepository;
+import com.enotes_api.request.LoginRequest;
 import com.enotes_api.request.UserRequest;
+import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
+import com.enotes_api.security.CustomUserDetails;
 import com.enotes_api.service.EmailService;
 import com.enotes_api.service.RoleService;
 import com.enotes_api.service.UserService;
 import com.enotes_api.utility.MapperUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -27,6 +34,10 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private AuthenticationManager authenticationManager;
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private UserRepository userRepository;
 
@@ -58,6 +69,7 @@ public class UserServiceImpl implements UserService {
                 .build();
         userEntity.setUserVerificationStatus(userVerificationDetails);
         userEntity.setIsActive(Boolean.FALSE);
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
 
         UserEntity savedUser = userRepository.save(userEntity);
 
@@ -95,6 +107,26 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserByEmail(String email) throws ResourceNotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_EMAIL_MESSAGE + email));
+    }
+
+    @Override
+    public LoginResponse logIn(LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken userNamePasswordRequest =
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(userNamePasswordRequest);
+
+        if (authentication.isAuthenticated()) {
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            UserEntity userEntity = customUserDetails.getUserEntity();
+            String token = "token yet to be generated";
+
+            return LoginResponse.builder()
+                    .userResponse(mapperUtil.map(userEntity, UserResponse.class))
+                    .token(token)
+                    .build();
+        }
+
+        return null;
     }
 
     /*

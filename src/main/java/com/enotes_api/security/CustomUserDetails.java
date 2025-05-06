@@ -2,6 +2,7 @@ package com.enotes_api.security;
 
 import com.enotes_api.entity.UserEntity;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class CustomUserDetails implements UserDetails {
 
     private UserEntity userEntity;

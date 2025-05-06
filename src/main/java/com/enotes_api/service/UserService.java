@@ -6,7 +6,9 @@ import com.enotes_api.exception.InvalidVerificationLinkException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceAlreadyVerifiedException;
 import com.enotes_api.exception.ResourceNotFoundException;
+import com.enotes_api.request.LoginRequest;
 import com.enotes_api.request.UserRequest;
+import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,8 +19,10 @@ public interface UserService {
 
     UserEntity getUserById(Integer userId) throws ResourceNotFoundException;
 
-    UserEntity verifyUser(Integer userId, String verificationCode) throws ResourceNotFoundException, InvalidVerificationLinkException, ResourceAlreadyVerifiedException;
+    UserEntity verifyUser(Integer userId, String verificationCode) throws ResourceNotFoundException,
+            InvalidVerificationLinkException, ResourceAlreadyVerifiedException;
 
     UserEntity getUserByEmail(String email) throws ResourceNotFoundException;
 
+    LoginResponse logIn(LoginRequest loginRequest);
 }
