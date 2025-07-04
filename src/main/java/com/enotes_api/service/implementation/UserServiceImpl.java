@@ -16,6 +16,7 @@ import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
 import com.enotes_api.security.CustomUserDetails;
 import com.enotes_api.service.EmailService;
+import com.enotes_api.service.JwtService;
 import com.enotes_api.service.RoleService;
 import com.enotes_api.service.UserService;
 import com.enotes_api.utility.MapperUtil;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService {
     private EmailService emailService;
 
     private MapperUtil mapperUtil;
+
+    private JwtService jwtService;
 
     @Override
     public UserResponse registerUser(UserRequest userRequest, HttpServletRequest request) throws ResourceNotFoundException,
@@ -118,11 +121,11 @@ public class UserServiceImpl implements UserService {
         if (authentication.isAuthenticated()) {
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             UserEntity userEntity = customUserDetails.getUserEntity();
-            String token = "token yet to be generated";
+            String jwtToken = jwtService.generateToken(userEntity);
 
             return LoginResponse.builder()
                     .userResponse(mapperUtil.map(userEntity, UserResponse.class))
-                    .token(token)
+                    .token(jwtToken)
                     .build();
         }
 
