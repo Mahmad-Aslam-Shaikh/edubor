@@ -132,6 +132,15 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public UserEntity updateUserRoles(Integer userId, Set<Integer> roleIds) throws ResourceNotFoundException {
+        UserEntity userEntity = getUserById(userId);
+        Set<RoleEntity> rolesToBeAssigned = roleService.getSpecifiedRoles(roleIds);
+
+        userEntity.setRoles(rolesToBeAssigned);
+        return userRepository.save(userEntity);
+    }
+
     /*
      * TODO: Write supporting service methods for pending APIs of UserController
      */
