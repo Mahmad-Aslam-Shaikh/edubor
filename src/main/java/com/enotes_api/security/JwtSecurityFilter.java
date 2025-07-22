@@ -1,11 +1,17 @@
 package com.enotes_api.security;
 
+import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,9 +40,16 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         String userEmailFromToken = null;
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
             tokenFromHeader = authorizationHeader.substring(7);
-            userEmailFromToken = jwtService.extractUserEmailFromToken(tokenFromHeader);
+            try {
+                userEmailFromToken = jwtService.extractUserEmailFromToken(tokenFromHeader);
+            } catch (SignatureException ex) {
+                sendErrorResponse(response, "Invalid JWT signature", HttpStatus.UNAUTHORIZED);
+                return;
+            } catch (ExpiredJwtException ex) {
+                sendErrorResponse(response, "JWT token expired", HttpStatus.UNAUTHORIZED);
+                return;
+            }
         }
-
         if (StringUtils.hasText(userEmailFromToken) && ObjectUtils.isEmpty(SecurityContextHolder.getContext().getAuthentication())) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmailFromToken);
             Boolean isTokenValid = jwtService.validateToken(tokenFromHeader, userDetails);
@@ -48,6 +61,18 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message, HttpStatus status) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ResponseEntity<?> jwtErrorResponse = ResponseUtils.createFailureResponseWithMessage(status, message);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonErrorResponse = objectMapper.writeValueAsString(jwtErrorResponse.getBody());
+
+        response.getWriter().write(jsonErrorResponse);
     }
 
 }
