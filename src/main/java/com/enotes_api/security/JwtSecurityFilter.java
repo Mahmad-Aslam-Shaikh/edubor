@@ -1,5 +1,6 @@
 package com.enotes_api.security;
 
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.response.ResponseUtils;
 import com.enotes_api.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,10 +44,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             try {
                 userEmailFromToken = jwtService.extractUserEmailFromToken(tokenFromHeader);
             } catch (SignatureException ex) {
-                sendErrorResponse(response, "Invalid JWT signature", HttpStatus.UNAUTHORIZED);
+                sendErrorResponse(response, ExceptionMessages.INVALID_JWT_SIGNATURE_MESSAGE);
                 return;
             } catch (ExpiredJwtException ex) {
-                sendErrorResponse(response, "JWT token expired", HttpStatus.UNAUTHORIZED);
+                sendErrorResponse(response, ExceptionMessages.JWT_TOKEN_EXPIRED_MESSAGE);
                 return;
             }
         }
@@ -63,12 +64,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void sendErrorResponse(HttpServletResponse response, String message, HttpStatus status) throws IOException {
-        response.setStatus(status.value());
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ResponseEntity<?> jwtErrorResponse = ResponseUtils.createFailureResponseWithMessage(status, message);
+        ResponseEntity<?> jwtErrorResponse = ResponseUtils.createFailureResponseWithMessage(HttpStatus.UNAUTHORIZED,
+                message);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonErrorResponse = objectMapper.writeValueAsString(jwtErrorResponse.getBody());
 

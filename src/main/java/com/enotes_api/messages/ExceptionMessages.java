@@ -13,7 +13,8 @@ public class ExceptionMessages {
     //File Related Exception Messages
     public static final String FILE_EXTENSION_MISSING_MESSAGE = "File must have an extension.";
 
-    public static final String INVALID_FILE_NAME_MESSAGE = "Invalid file name format. File name should contain only one dot.";
+    public static final String INVALID_FILE_NAME_MESSAGE = "Invalid file name format. File name should contain only " +
+            "one dot.";
 
     public static final String UNSUPPORTED_FILE_EXTENSION_MESSAGE = "Unsupported file extension: ";
 
@@ -47,5 +48,9 @@ public class ExceptionMessages {
     // Email Related Exception Messages
     public static final String UNABLE_TO_SEND_EMAIL_MESSAGE = "Error sending email for the action.";
 
+    // JWT Token Related Exception Messages
+    public static final String INVALID_JWT_SIGNATURE_MESSAGE = "Invalid JWT signature";
+
+    public static final String JWT_TOKEN_EXPIRED_MESSAGE = "JWT token expired";
 
 }

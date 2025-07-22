@@ -32,16 +32,14 @@ public class FavoriteNotesController {
     @PostMapping("/favorite/{notes-id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addToFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
-        Integer userId = 1;
-        favoriteNotesService.makeNoteAsFavorite(notesId, userId);
+        favoriteNotesService.makeNoteAsFavorite(notesId);
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.CREATED, "Notes added to favorites");
     }
 
     @GetMapping("/favorite/all")
     @PreAuthorize("hasRole('USER')")
     public Object getUsersFavoriteNotes() {
-        Integer userId = 1;
-        List<FavoriteNotesEntity> userFavoriteNotes = favoriteNotesService.getFavoriteNotesByUser(userId);
+        List<FavoriteNotesEntity> userFavoriteNotes = favoriteNotesService.getFavoriteNotesByUser();
         List<NotesResponse> favoriteNoteResponse =
                 userFavoriteNotes.stream().map(eachFavNote ->
                         mapperUtil.map(eachFavNote.getNote(), NotesResponse.class)).collect(Collectors.toList());
@@ -51,10 +49,8 @@ public class FavoriteNotesController {
     @DeleteMapping("/favorite/{notes-id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> removeFromFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
-        Integer userId = 1;
-        favoriteNotesService.removeNoteFromFavorite(notesId, userId);
+        favoriteNotesService.removeNoteFromFavorite(notesId);
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Notes removed from favorites");
     }
-
 
 }

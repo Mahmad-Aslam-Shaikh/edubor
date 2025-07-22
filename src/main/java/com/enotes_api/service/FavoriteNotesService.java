@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface FavoriteNotesService {
 
-    void makeNoteAsFavorite(Integer notesId, Integer userId) throws ResourceNotFoundException;
+    void makeNoteAsFavorite(Integer notesId) throws ResourceNotFoundException;
 
-    void removeNoteFromFavorite(Integer notesId, Integer userId) throws ResourceNotFoundException;
+    void removeNoteFromFavorite(Integer notesId) throws ResourceNotFoundException;
 
     FavoriteNotesEntity getFavoriteNoteById(Integer notesId, Integer userId) throws ResourceNotFoundException;
 
-    List<FavoriteNotesEntity> getFavoriteNotesByUser(Integer userId);
+    List<FavoriteNotesEntity> getFavoriteNotesByUser();
 }

@@ -16,6 +16,7 @@ import com.enotes_api.response.NotesResponse;
 import com.enotes_api.service.FileService;
 import com.enotes_api.service.MasterCategoryService;
 import com.enotes_api.service.NotesService;
+import com.enotes_api.service.UserService;
 import com.enotes_api.utility.MapperUtil;
 import com.enotes_api.utility.PageUtil;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,8 @@ public class NotesServiceImpl implements NotesService {
     private MasterCategoryService masterCategoryService;
 
     private FileService fileService;
+
+    private UserService userService;
 
     private MapperUtil mapperUtil;
 
@@ -83,8 +86,9 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo) {
+    public NotesPaginationResponse getUserNotesWithPagination(Integer pageNo) {
         Pageable pageable = PageRequest.of(pageNo, PageUtil.pageSize);
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         Page<NotesEntity> userNotes = notesRepository.getNonDeletedUserNotes(userId, pageable);
 
         long totalElements = userNotes.getTotalElements();
@@ -172,7 +176,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public List<NotesEntity> getUserNotesInRecycleBin(Integer userId) {
+    public List<NotesEntity> getUserNotesInRecycleBin() {
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         return notesRepository.findByCreatedByAndIsDeleted(userId, Boolean.TRUE);
     }
 
@@ -204,7 +209,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public boolean emptyUserRecycleBin(Integer userId) {
+    public boolean emptyUserRecycleBin() {
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         List<NotesEntity> userNotesInBin = notesRepository.findAllByIsDeletedTrueAndCreatedBy(userId);
         if (!CollectionUtils.isEmpty(userNotesInBin)) {
             notesRepository.deleteAll(userNotesInBin);
