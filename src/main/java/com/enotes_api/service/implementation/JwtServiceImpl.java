@@ -1,7 +1,9 @@
 package com.enotes_api.service.implementation;
 
+import com.enotes_api.entity.RoleEntity;
 import com.enotes_api.entity.UserEntity;
 import com.enotes_api.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -16,13 +18,15 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtServiceImpl implements JwtService {
 
     private String secretKey;
 
-    public JwtServiceImpl() {
+    public JwtServiceImpl(ObjectMapper objectMapper) {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
             SecretKey key = keyGenerator.generateKey();
@@ -48,7 +52,12 @@ public class JwtServiceImpl implements JwtService {
 
     private Map<String, ?> getClaims(UserEntity userEntity) {
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("userRoles", userEntity.getRoles());
+
+        Set<String> userRoles = userEntity.getRoles().stream()
+                .map(RoleEntity::getName)
+                .collect(Collectors.toSet());
+
+        claims.put("userRoles", userRoles);
         claims.put("isActive", userEntity.getIsActive());
         return claims;
     }

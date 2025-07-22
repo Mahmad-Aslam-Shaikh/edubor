@@ -4,6 +4,7 @@ import com.enotes_api.response.ResponseUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,8 +55,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException exception) {
-        return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> handleAuthorizationDeniedExceptionException(AuthorizationDeniedException exception) {
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.FORBIDDEN, exception.getMessage());
+    }
 
 }

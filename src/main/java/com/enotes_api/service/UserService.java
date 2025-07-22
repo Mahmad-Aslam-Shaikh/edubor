@@ -12,6 +12,8 @@ import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Set;
+
 public interface UserService {
 
     UserResponse registerUser(UserRequest userRequest, HttpServletRequest request) throws ResourceNotFoundException,
@@ -25,4 +27,7 @@ public interface UserService {
     UserEntity getUserByEmail(String email) throws ResourceNotFoundException;
 
     LoginResponse logIn(LoginRequest loginRequest);
+
+    UserEntity updateUserRoles(Integer userId, Set<Integer> roleIds) throws ResourceNotFoundException;
+
 }

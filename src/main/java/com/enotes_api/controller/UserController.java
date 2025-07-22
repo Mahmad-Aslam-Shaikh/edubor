@@ -17,13 +17,18 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping(RouteConstants.USER)
@@ -42,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{user-id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> getUserById(@PathVariable(name = "user-id") Integer userId) throws ResourceNotFoundException {
         UserEntity userEntity = userService.getUserById(userId);
         UserResponse userResponse = mapperUtil.map(userEntity, UserResponse.class);
@@ -54,6 +60,21 @@ public class UserController {
         if (!ObjectUtils.isEmpty(loginResponse))
             return ResponseUtils.createSuccessResponse(loginResponse, HttpStatus.OK);
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "Invalid Credentials");
+    }
+
+    @PutMapping("/{userId}/roles")
+    // This API replaces the previously assigned roles with new role
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<?> updateUserRoles(@PathVariable Integer userId,
+                                             @RequestBody(required = false) Set<Integer> roleIds) throws ResourceNotFoundException {
+        System.out.println("Role IDs: " + roleIds);
+        if (CollectionUtils.isEmpty(roleIds))
+            return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "At least one role must be " +
+                    "selected");
+
+        UserEntity updatedUserEntity = userService.updateUserRoles(userId, roleIds);
+        UserResponse userResponse = mapperUtil.map(updatedUserEntity, UserResponse.class);
+        return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.OK);
     }
 
     /*
