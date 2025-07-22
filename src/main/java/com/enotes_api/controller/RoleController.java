@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,18 +34,21 @@ public class RoleController {
     private MapperUtil mapperUtil;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveRole(@Valid @RequestBody RoleRequest roleRequest) throws ResourceAlreadyExistsException {
         RoleResponse savedRole = roleService.createRole(roleRequest);
         return ResponseUtils.createSuccessResponse(savedRole, HttpStatus.CREATED);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllRoles() {
         List<RoleResponse> allRoles = roleService.getAllRoles();
         return ResponseUtils.createSuccessResponse(allRoles, HttpStatus.OK);
     }
 
     @GetMapping("/{role-id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getRoleById(@PathVariable(name = "role-id") Integer roleId) throws ResourceNotFoundException {
         RoleEntity roleEntity = roleService.getRoleById(roleId);
         RoleResponse roleResponse = mapperUtil.map(roleEntity, RoleResponse.class);
@@ -52,6 +56,7 @@ public class RoleController {
     }
 
     @PutMapping("/{role-id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateRole(@PathVariable(name = "role-id") Integer roleId,
                                         @RequestBody RoleRequest roleRequest) throws ResourceNotFoundException,
             ResourceAlreadyExistsException {
@@ -60,6 +65,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{role-id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteRole(@PathVariable(name = "role-id") Integer roleId) {
         boolean isRoleDeleted = roleService.deleteRole(roleId);
         if (isRoleDeleted) {

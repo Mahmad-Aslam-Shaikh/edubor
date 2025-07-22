@@ -13,6 +13,7 @@ import com.enotes_api.utility.MapperUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class NotesController {
     private MapperUtil mapperUtil;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> saveNotes(@RequestPart("note") NotesRequest notesRequest,
                                        @RequestPart(name = "files", required = false) List<MultipartFile> files)
             throws ResourceNotFoundException, FileUploadFailedException, IOException, InvalidFileException {
@@ -46,6 +48,7 @@ public class NotesController {
     }
 
     @GetMapping("/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getNotesById(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         NotesEntity notesEntity = notesService.getNotesById(notesId, Boolean.FALSE);
         NotesResponse notesResponse = mapperUtil.map(notesEntity, NotesResponse.class);
@@ -53,12 +56,14 @@ public class NotesController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllNotes() {
         List<NotesResponse> allNotes = notesService.getAllNotes();
         return ResponseUtils.createSuccessResponse(allNotes, HttpStatus.OK);
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserNotesWithPagination(Integer userId, @RequestParam(name = "pageNo", defaultValue =
             "0") Integer pageNo) {
         NotesPaginationResponse userNotesWithPagination = notesService.getUserNotesWithPagination(1, pageNo);
@@ -66,6 +71,7 @@ public class NotesController {
     }
 
     @PutMapping("/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateNotes(@PathVariable(name = "notes-id") Integer notesId,
                                          @RequestPart(name = "note", required = false) NotesRequest notesRequest,
                                          @RequestPart(name = "files", required = false) List<MultipartFile> files)
@@ -75,6 +81,7 @@ public class NotesController {
     }
 
     @PutMapping("/delete/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deleteNotes(@PathVariable(name = "notes-id") Integer notesId)
             throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
         NotesResponse deletedNote = notesService.deleteNotes(notesId);
@@ -82,6 +89,7 @@ public class NotesController {
     }
 
     @PutMapping("/restore/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> restoreNotes(@PathVariable(name = "notes-id") Integer notesId)
             throws ResourceNotFoundException {
         NotesResponse deletedNote = notesService.restoreNotes(notesId);
@@ -89,6 +97,7 @@ public class NotesController {
     }
 
     @GetMapping("/user/bin")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserNotesInRecycleBin(Integer userId) {
         List<NotesEntity> userNotesInRecycleBin = notesService.getUserNotesInRecycleBin(1);
         List<NotesResponse> userNotesInBinResponse = mapperUtil.mapList(userNotesInRecycleBin, NotesResponse.class);
@@ -98,6 +107,7 @@ public class NotesController {
     }
 
     @DeleteMapping("/bin/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deleteNoteFromRecycleBin(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         boolean isNoteDeletedFromBin = notesService.deleteNotesFromRecycleBin(notesId);
         if (isNoteDeletedFromBin) {
@@ -108,6 +118,7 @@ public class NotesController {
     }
 
     @DeleteMapping("/bin/empty")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> emptyNotesRecycleBin() {
         Integer userId = 1;
         boolean isRecycleBinMadeEmpty = notesService.emptyUserRecycleBin(userId);
@@ -118,6 +129,7 @@ public class NotesController {
     }
 
     @PostMapping("/copy/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> copyNotes(@PathVariable(name = "notes-id") Integer notesId)
             throws ResourceNotFoundException, FileUploadFailedException, IOException, InvalidFileException {
         NotesResponse notesResponse = notesService.copyNotes(notesId);

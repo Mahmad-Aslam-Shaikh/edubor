@@ -9,6 +9,7 @@ import com.enotes_api.utility.MapperUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class FavoriteNotesController {
     private MapperUtil mapperUtil;
 
     @PostMapping("/favorite/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> addToFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         Integer userId = 1;
         favoriteNotesService.makeNoteAsFavorite(notesId, userId);
@@ -36,6 +38,7 @@ public class FavoriteNotesController {
     }
 
     @GetMapping("/favorite/all")
+    @PreAuthorize("hasRole('USER')")
     public Object getUsersFavoriteNotes() {
         Integer userId = 1;
         List<FavoriteNotesEntity> userFavoriteNotes = favoriteNotesService.getFavoriteNotesByUser(userId);
@@ -46,6 +49,7 @@ public class FavoriteNotesController {
     }
 
     @DeleteMapping("/favorite/{notes-id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> removeFromFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         Integer userId = 1;
         favoriteNotesService.removeNoteFromFavorite(notesId, userId);

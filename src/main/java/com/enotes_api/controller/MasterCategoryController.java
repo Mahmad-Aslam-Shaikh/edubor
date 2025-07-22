@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class MasterCategoryController {
     private MapperUtil mapperUtil;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
         MasterCategoryResponse savedMasterCategoryResponse =
                 masterCategoryService.saveMasterCategory(masterCategoryRequest);
@@ -40,18 +42,21 @@ public class MasterCategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getAllMasterCategories();
         return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
     @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> getActiveMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getActiveMasterCategories();
         return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
     @GetMapping("/{category-id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
         MasterCategoryEntity masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
         MasterCategoryResponse masterCategoryResponse = mapperUtil.map(masterCategory, MasterCategoryResponse.class);
@@ -63,6 +68,7 @@ public class MasterCategoryController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         MasterCategoryResponse updatedMasterCategoryResponse =
                 masterCategoryService.updateMasterCategory(masterCategoryRequest);
@@ -70,6 +76,7 @@ public class MasterCategoryController {
     }
 
     @PutMapping("/{category-id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
         Boolean isDeleted = masterCategoryService.deleteMasterCategoryById(categoryId);
         if (isDeleted) {
