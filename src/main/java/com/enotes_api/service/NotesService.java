@@ -22,7 +22,7 @@ public interface NotesService {
 
     List<NotesResponse> getAllNotes();
 
-    NotesPaginationResponse getUserNotesWithPagination(Integer userId, Integer pageNo);
+    NotesPaginationResponse getUserNotesWithPagination(Integer pageNo);
 
     NotesResponse updateNotes(Integer notesId, NotesRequest notesRequest, List<MultipartFile> files) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
 
@@ -30,13 +30,13 @@ public interface NotesService {
 
     NotesResponse restoreNotes(Integer notesId) throws ResourceNotFoundException;
 
-    List<NotesEntity> getUserNotesInRecycleBin(Integer userId);
+    List<NotesEntity> getUserNotesInRecycleBin();
 
     void deleteOutDatedNotesFromBin(LocalDateTime previousDateTime);
 
     boolean deleteNotesFromRecycleBin(Integer notesId) throws ResourceNotFoundException;
 
-    boolean emptyUserRecycleBin(Integer userId);
+    boolean emptyUserRecycleBin();
 
     NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
 }

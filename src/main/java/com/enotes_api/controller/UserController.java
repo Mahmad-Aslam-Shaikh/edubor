@@ -67,7 +67,6 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> updateUserRoles(@PathVariable Integer userId,
                                              @RequestBody(required = false) Set<Integer> roleIds) throws ResourceNotFoundException {
-        System.out.println("Role IDs: " + roleIds);
         if (CollectionUtils.isEmpty(roleIds))
             return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "At least one role must be " +
                     "selected");
@@ -75,6 +74,14 @@ public class UserController {
         UserEntity updatedUserEntity = userService.updateUserRoles(userId, roleIds);
         UserResponse userResponse = mapperUtil.map(updatedUserEntity, UserResponse.class);
         return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<?> getLoggedInUser() {
+        UserEntity loggedInUser = userService.getCurrentLoggedInUser();
+        UserResponse loggedInUserResponse = mapperUtil.map(loggedInUser, UserResponse.class);
+        return ResponseUtils.createSuccessResponse(loggedInUserResponse, HttpStatus.OK);
     }
 
     /*

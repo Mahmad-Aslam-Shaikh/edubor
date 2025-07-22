@@ -48,7 +48,7 @@ public class NotesController {
     }
 
     @GetMapping("/{notes-id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> getNotesById(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         NotesEntity notesEntity = notesService.getNotesById(notesId, Boolean.FALSE);
         NotesResponse notesResponse = mapperUtil.map(notesEntity, NotesResponse.class);
@@ -56,7 +56,7 @@ public class NotesController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllNotes() {
         List<NotesResponse> allNotes = notesService.getAllNotes();
         return ResponseUtils.createSuccessResponse(allNotes, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class NotesController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserNotesWithPagination(Integer userId, @RequestParam(name = "pageNo", defaultValue =
             "0") Integer pageNo) {
-        NotesPaginationResponse userNotesWithPagination = notesService.getUserNotesWithPagination(1, pageNo);
+        NotesPaginationResponse userNotesWithPagination = notesService.getUserNotesWithPagination(pageNo);
         return ResponseUtils.createSuccessResponse(userNotesWithPagination, HttpStatus.OK);
     }
 
@@ -98,8 +98,8 @@ public class NotesController {
 
     @GetMapping("/user/bin")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getUserNotesInRecycleBin(Integer userId) {
-        List<NotesEntity> userNotesInRecycleBin = notesService.getUserNotesInRecycleBin(1);
+    public ResponseEntity<?> getUserNotesInRecycleBin() {
+        List<NotesEntity> userNotesInRecycleBin = notesService.getUserNotesInRecycleBin();
         List<NotesResponse> userNotesInBinResponse = mapperUtil.mapList(userNotesInRecycleBin, NotesResponse.class);
         if (CollectionUtils.isEmpty(userNotesInBinResponse))
             return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Recycle bin is empty");
@@ -120,8 +120,7 @@ public class NotesController {
     @DeleteMapping("/bin/empty")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> emptyNotesRecycleBin() {
-        Integer userId = 1;
-        boolean isRecycleBinMadeEmpty = notesService.emptyUserRecycleBin(userId);
+        boolean isRecycleBinMadeEmpty = notesService.emptyUserRecycleBin();
         if (isRecycleBinMadeEmpty) {
             return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Recycle Bin Successfully Made Empty");
         }

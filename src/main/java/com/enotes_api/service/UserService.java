@@ -30,4 +30,5 @@ public interface UserService {
 
     UserEntity updateUserRoles(Integer userId, Set<Integer> roleIds) throws ResourceNotFoundException;
 
+    UserEntity getCurrentLoggedInUser();
 }

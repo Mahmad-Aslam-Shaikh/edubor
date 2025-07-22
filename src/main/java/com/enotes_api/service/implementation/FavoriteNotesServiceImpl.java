@@ -8,6 +8,7 @@ import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.repository.FavoriteNotesRepository;
 import com.enotes_api.service.FavoriteNotesService;
 import com.enotes_api.service.NotesService;
+import com.enotes_api.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,11 @@ public class FavoriteNotesServiceImpl implements FavoriteNotesService {
 
     private NotesService notesService;
 
+    private UserService userService;
+
     @Override
-    public void makeNoteAsFavorite(Integer notesId, Integer userId) throws ResourceNotFoundException {
+    public void makeNoteAsFavorite(Integer notesId) throws ResourceNotFoundException {
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         NotesEntity note = notesService.getNotesById(notesId, Boolean.FALSE);
 
         FavoriteNotesPKs favoriteNoteId = new FavoriteNotesPKs(userId, note.getId());
@@ -43,12 +47,14 @@ public class FavoriteNotesServiceImpl implements FavoriteNotesService {
     }
 
     @Override
-    public List<FavoriteNotesEntity> getFavoriteNotesByUser(Integer userId) {
+    public List<FavoriteNotesEntity> getFavoriteNotesByUser() {
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         return favoriteNotesRepository.findByIdUserId(userId);
     }
 
     @Override
-    public void removeNoteFromFavorite(Integer notesId, Integer userId) throws ResourceNotFoundException {
+    public void removeNoteFromFavorite(Integer notesId) throws ResourceNotFoundException {
+        Integer userId = userService.getCurrentLoggedInUser().getId();
         FavoriteNotesEntity favoriteNote = getFavoriteNoteById(notesId, userId);
         favoriteNotesRepository.delete(favoriteNote);
     }
