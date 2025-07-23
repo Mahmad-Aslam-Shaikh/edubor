@@ -59,8 +59,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<?> handleAuthorizationDeniedExceptionException(AuthorizationDeniedException exception) {
+    public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException exception) {
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.FORBIDDEN, exception.getMessage());
     }
+
+    @ExceptionHandler(PasswordChangeException.class)
+    public ResponseEntity<?> handlePasswordChangeException(PasswordChangeException exception) {
+        return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
 
 }

@@ -3,10 +3,12 @@ package com.enotes_api.service;
 import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.InvalidVerificationLinkException;
+import com.enotes_api.exception.PasswordChangeException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceAlreadyVerifiedException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.LoginRequest;
+import com.enotes_api.request.PasswordChangeRequest;
 import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
@@ -31,4 +33,6 @@ public interface UserService {
     UserEntity updateUserRoles(Integer userId, Set<Integer> roleIds) throws ResourceNotFoundException;
 
     UserEntity getCurrentLoggedInUser();
+
+    void changeUserPassword(PasswordChangeRequest passwordChangeRequest) throws PasswordChangeException;
 }

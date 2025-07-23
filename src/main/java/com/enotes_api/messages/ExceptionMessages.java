@@ -10,7 +10,7 @@ public class ExceptionMessages {
     // Notes Related Exception Messages
     public static final String NOTES_NOT_FOUND_MESSAGE = "Notes Not Found With ID = ";
 
-    //File Related Exception Messages
+    // File Related Exception Messages
     public static final String FILE_EXTENSION_MISSING_MESSAGE = "File must have an extension.";
 
     public static final String INVALID_FILE_NAME_MESSAGE = "Invalid file name format. File name should contain only " +
@@ -52,5 +52,10 @@ public class ExceptionMessages {
     public static final String INVALID_JWT_SIGNATURE_MESSAGE = "Invalid JWT signature";
 
     public static final String JWT_TOKEN_EXPIRED_MESSAGE = "JWT token expired";
+
+    // Password Related Exception Messages
+    public static final String INVALID_OLD_PASSWORD_MESSAGE = "Incorrect old password";
+
+    public static final String OLD_AND_NEW_PASSWORD_SAME_MESSAGE = "Password already used for this account";
 
 }

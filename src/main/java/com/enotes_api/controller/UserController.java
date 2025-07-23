@@ -3,9 +3,11 @@ package com.enotes_api.controller;
 import com.enotes_api.constants.RouteConstants;
 import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
+import com.enotes_api.exception.PasswordChangeException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.LoginRequest;
+import com.enotes_api.request.PasswordChangeRequest;
 import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.ResponseUtils;
@@ -40,8 +42,7 @@ public class UserController {
     private MapperUtil mapperUtil;
 
     @PostMapping
-    public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest, HttpServletRequest request) throws ResourceNotFoundException,
-            ResourceAlreadyExistsException, EmailException {
+    public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest, HttpServletRequest request) throws ResourceNotFoundException, ResourceAlreadyExistsException, EmailException {
         UserResponse userResponse = userService.registerUser(userRequest, request);
         return ResponseUtils.createSuccessResponse(userResponse, HttpStatus.CREATED);
     }
@@ -68,8 +69,8 @@ public class UserController {
     public ResponseEntity<?> updateUserRoles(@PathVariable Integer userId,
                                              @RequestBody(required = false) Set<Integer> roleIds) throws ResourceNotFoundException {
         if (CollectionUtils.isEmpty(roleIds))
-            return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "At least one role must be " +
-                    "selected");
+            return ResponseUtils.createFailureResponseWithMessage(HttpStatus.BAD_REQUEST, "At least one role must be "
+                    + "selected");
 
         UserEntity updatedUserEntity = userService.updateUserRoles(userId, roleIds);
         UserResponse userResponse = mapperUtil.map(updatedUserEntity, UserResponse.class);
@@ -83,6 +84,14 @@ public class UserController {
         UserResponse loggedInUserResponse = mapperUtil.map(loggedInUser, UserResponse.class);
         return ResponseUtils.createSuccessResponse(loggedInUserResponse, HttpStatus.OK);
     }
+
+    @PutMapping("/password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody PasswordChangeRequest passwordChangeRequest) throws PasswordChangeException {
+        userService.changeUserPassword(passwordChangeRequest);
+        return ResponseUtils.createSuccessResponse("Password updated successfully", HttpStatus.OK);
+    }
+
 
     /*
      * TODO: Write APIs for CRUD operation
