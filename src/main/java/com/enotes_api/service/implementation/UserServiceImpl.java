@@ -5,12 +5,14 @@ import com.enotes_api.entity.UserAccountVerificationEntity;
 import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.InvalidVerificationLinkException;
+import com.enotes_api.exception.PasswordChangeException;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceAlreadyVerifiedException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.repository.UserRepository;
 import com.enotes_api.request.LoginRequest;
+import com.enotes_api.request.PasswordChangeRequest;
 import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
@@ -152,6 +154,19 @@ public class UserServiceImpl implements UserService {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         return customUserDetails.getUserEntity();
+    }
+
+    @Override
+    public void changeUserPassword(PasswordChangeRequest passwordChangeRequest) throws PasswordChangeException {
+        if (passwordChangeRequest.getOldPassword().equals(passwordChangeRequest.getNewPassword()))
+            throw new PasswordChangeException(ExceptionMessages.OLD_AND_NEW_PASSWORD_SAME_MESSAGE);
+
+        UserEntity loggedInUser = getCurrentLoggedInUser();
+        if (!bCryptPasswordEncoder.matches(passwordChangeRequest.getOldPassword(), loggedInUser.getPassword()))
+            throw new PasswordChangeException(ExceptionMessages.INVALID_OLD_PASSWORD_MESSAGE);
+
+        loggedInUser.setPassword(bCryptPasswordEncoder.encode(passwordChangeRequest.getNewPassword()));
+        userRepository.save(loggedInUser);
     }
 
     /*
