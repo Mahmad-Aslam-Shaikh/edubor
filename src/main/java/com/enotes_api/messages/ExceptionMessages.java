@@ -58,4 +58,9 @@ public class ExceptionMessages {
 
     public static final String OLD_AND_NEW_PASSWORD_SAME_MESSAGE = "Password already used for this account";
 
+    public static final String RE_ENTERED_PASSWORD_MISMATCH_MESSAGE = "Re-entered password mismatch";
+
+    public static final String TIMEOUT_TO_RESET_PASSWORD_MESSAGE = "Time-out. Please repeat the Forget password " +
+            "procedure again to reset your password";
+
 }

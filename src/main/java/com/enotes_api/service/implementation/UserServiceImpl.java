@@ -13,6 +13,7 @@ import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.repository.UserRepository;
 import com.enotes_api.request.LoginRequest;
 import com.enotes_api.request.PasswordChangeRequest;
+import com.enotes_api.request.PasswordResetRequest;
 import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
@@ -167,6 +168,48 @@ public class UserServiceImpl implements UserService {
 
         loggedInUser.setPassword(bCryptPasswordEncoder.encode(passwordChangeRequest.getNewPassword()));
         userRepository.save(loggedInUser);
+    }
+
+    @Override
+    public void sendPasswordResetMail(String userEmail, HttpServletRequest request) throws ResourceNotFoundException,
+            EmailException {
+        UserEntity userEntity = getUserByEmail(userEmail);
+        UserAccountVerificationEntity userVerificationDetails = UserAccountVerificationEntity.builder()
+                .passwordResetCode(UUID.randomUUID().toString())
+                .build();
+        userEntity.setUserVerificationStatus(userVerificationDetails);
+        UserEntity user = userRepository.save(userEntity);
+
+        emailService.sendPasswordResetMail(user, request);
+    }
+
+    @Override
+    public boolean verifyUserForPasswordReset(Integer userId, String passwordResetCodeRequest) throws ResourceNotFoundException {
+        UserEntity userEntity = getUserById(userId);
+        UserAccountVerificationEntity userPasswordResetVerificationStatus = userEntity.getUserVerificationStatus();
+
+        if (ObjectUtils.isEmpty(userPasswordResetVerificationStatus))
+            return false;
+
+        String passwordResetCodeInDB = userPasswordResetVerificationStatus.getPasswordResetCode();
+        if (passwordResetCodeInDB != null && !passwordResetCodeInDB.isBlank())
+            return passwordResetCodeRequest.equals(passwordResetCodeInDB);
+
+        return false;
+    }
+
+    @Override
+    public void resetUserPassword(Integer userId, PasswordResetRequest passwordResetRequest) throws ResourceNotFoundException, PasswordChangeException {
+        if (!passwordResetRequest.getNewPassword().equals(passwordResetRequest.getReEnterNewPassword()))
+            throw new PasswordChangeException(ExceptionMessages.RE_ENTERED_PASSWORD_MISMATCH_MESSAGE);
+
+        UserEntity userEntity = getUserById(userId);
+        if (ObjectUtils.isEmpty(userEntity.getUserVerificationStatus()))
+            throw new PasswordChangeException(ExceptionMessages.TIMEOUT_TO_RESET_PASSWORD_MESSAGE);
+
+        userEntity.setPassword(bCryptPasswordEncoder.encode(passwordResetRequest.getNewPassword()));
+        userEntity.setUserVerificationStatus(null);
+        userRepository.save(userEntity);
     }
 
     /*

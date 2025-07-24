@@ -22,7 +22,10 @@ public class UserAccountVerificationEntity {
     @Column(name = "VERIFICATION_ID")
     private Integer verificationId;
 
-    @Column(name = "VERIFICATION_CODE", nullable = false)
+    @Column(name = "VERIFICATION_CODE")
     private String verificationCode;
+
+    @Column(name = "PASSWORD_RESET_CODE")
+    private String passwordResetCode;
 
 }

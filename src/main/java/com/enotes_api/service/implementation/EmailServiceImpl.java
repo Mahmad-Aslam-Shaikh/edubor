@@ -17,6 +17,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,37 @@ public class EmailServiceImpl implements EmailService {
                             "&code=" + user.getUserVerificationStatus().getVerificationCode();
 
             String content = String.format(EmailMessages.REGISTRATION_EMAIL_CONTENT, user.getFirstName(),
+                    verificationLink);
+            mimeMessageHelper.setText(content, true);
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (MessagingException | MailException | UnsupportedEncodingException e) {
+            System.out.println(e.getClass());
+            throw new EmailException(ExceptionMessages.UNABLE_TO_SEND_EMAIL_MESSAGE);
+        }
+    }
+
+    @Override
+    public void sendPasswordResetMail(UserEntity user, HttpServletRequest request) throws EmailException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = null;
+        try {
+            mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            mimeMessageHelper.setFrom(fromEmail, EmailMessages.PASSWORD_RESET_EMAIL_TITLE);
+            mimeMessageHelper.setSubject(EmailMessages.PASSWORD_RESET_EMAIL_SUBJECT);
+            mimeMessageHelper.setTo(user.getEmail());
+
+            String baseUrl = getBaseUrl(request);
+            String randomString = UUID.randomUUID().toString();
+
+            String verificationLink =
+                    baseUrl + RouteConstants.HOME + RouteConstants.USER_PASSWORD_VERIFY + "?user-id=" + user.getId() +
+                            "&code=" + user.getUserVerificationStatus().getPasswordResetCode();
+
+//            String verificationLink =
+//                    baseUrl + RouteConstants.HOME + RouteConstants.USER_PASSWORD_VERIFY + "?user-id=" + user.getId() +
+//                            "&code=" + user.getUserVerificationStatus().getVerificationCode();
+
+            String content = String.format(EmailMessages.PASSWORD_RESET_EMAIL_CONTENT, user.getFirstName(),
                     verificationLink);
             mimeMessageHelper.setText(content, true);
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
