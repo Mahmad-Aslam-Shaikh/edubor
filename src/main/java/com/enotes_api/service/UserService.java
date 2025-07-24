@@ -9,6 +9,7 @@ import com.enotes_api.exception.ResourceAlreadyVerifiedException;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.LoginRequest;
 import com.enotes_api.request.PasswordChangeRequest;
+import com.enotes_api.request.PasswordResetRequest;
 import com.enotes_api.request.UserRequest;
 import com.enotes_api.response.LoginResponse;
 import com.enotes_api.response.UserResponse;
@@ -35,4 +36,11 @@ public interface UserService {
     UserEntity getCurrentLoggedInUser();
 
     void changeUserPassword(PasswordChangeRequest passwordChangeRequest) throws PasswordChangeException;
+
+    void sendPasswordResetMail(String userEmail, HttpServletRequest request) throws ResourceNotFoundException,
+            EmailException;
+
+    boolean verifyUserForPasswordReset(Integer userId, String passwordResetCodeRequest) throws ResourceNotFoundException;
+
+    void resetUserPassword(Integer userId, PasswordResetRequest passwordResetRequest) throws ResourceNotFoundException, PasswordChangeException;
 }
