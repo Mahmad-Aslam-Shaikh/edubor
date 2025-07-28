@@ -1,0 +1,250 @@
+# Application name
+spring:
+  application:
+    name: edubor
+  profiles:
+    active: dev
+---
+# Configurations for dev profile
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: feature
+
+  # MySQL database connection settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/edubor
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA and Hibernate settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Email and SMTP settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password: code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# File Path to Upload
+file:
+  path:
+    upload: note-files/
+---
+
+# Configurations for dev profile
+server:
+  port: 8081
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # MySQL database connection settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/edubor_dev
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA and Hibernate settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Email and SMTP settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password: code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# File Path to Upload
+file:
+  path:
+    upload: note-files/
+---
+
+# Configurations for qa profile
+server:
+  port: 8082
+
+spring:
+  config:
+    activate:
+      on-profile: qa
+
+  # MySQL database connection settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/edubor_qa
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA and Hibernate settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Email and SMTP settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password: code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# File Path to Upload
+file:
+  path:
+    upload: note-files/
+---
+
+# Configurations for uat profile
+server:
+  port: 8083
+
+spring:
+  config:
+    activate:
+      on-profile: uat
+
+  # MySQL database connection settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/edubor_uat
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA and Hibernate settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Email and SMTP settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password: code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# File Path to Upload
+file:
+  path:
+    upload: note-files/
+---
+
+# Configurations for prod profile
+server:
+  port: 8084
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  # MySQL database connection settings
+  datasource:
+    url: jdbc:mysql://localhost:3306/edubor_prod
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA and Hibernate settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # Email and SMTP settings
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email
+    password: code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# File Path to Upload
+file:
+  path:
+    upload: note-files/
