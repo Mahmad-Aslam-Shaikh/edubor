@@ -33,4 +33,20 @@ public interface NotesRepository extends JpaRepository<NotesEntity, Integer> {
 
     List<NotesEntity> findAllByIsDeletedTrueAndCreatedBy(Integer userId);
 
+    @Query("""
+                SELECT n
+                FROM NOTES n
+                JOIN n.category c
+                WHERE n.isDeleted = false
+                  AND n.createdBy = :userId
+                  AND (
+                       LOWER(n.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(n.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
+                       LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  )
+            """)
+    Page<NotesEntity> searchNotesByKeywordWithPagination(@Param("keyword") String keyword,
+                                                         @Param("userId") Integer userId,
+                                                         Pageable pageable);
+
 }

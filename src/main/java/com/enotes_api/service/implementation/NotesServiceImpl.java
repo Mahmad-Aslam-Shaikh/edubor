@@ -4,10 +4,10 @@ import com.enotes_api.entity.FavoriteNotesPKs;
 import com.enotes_api.entity.FileEntity;
 import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.entity.NotesEntity;
-import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.exception.FileUploadFailedException;
 import com.enotes_api.exception.InvalidFileException;
 import com.enotes_api.exception.ResourceNotFoundException;
+import com.enotes_api.messages.ExceptionMessages;
 import com.enotes_api.repository.FavoriteNotesRepository;
 import com.enotes_api.repository.NotesRepository;
 import com.enotes_api.request.NotesRequest;
@@ -220,10 +220,40 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException {
+    public NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException,
+            FileUploadFailedException, IOException {
         NotesEntity notesToCopy = getNotesById(notesId, Boolean.FALSE);
         NotesRequest noteRequest = mapperUtil.map(notesToCopy, NotesRequest.class);
         return saveNotes(noteRequest, null);
+    }
+
+    @Override
+    public NotesPaginationResponse searchUserNotesWithPagination(String keyword, Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, PageUtil.pageSize);
+        Integer userId = userService.getCurrentLoggedInUser().getId();
+        Page<NotesEntity> userNotes = notesRepository.searchNotesByKeywordWithPagination(keyword, userId, pageable);
+
+        long totalElements = userNotes.getTotalElements();
+        int totalPages = userNotes.getTotalPages();
+        int pageNum = userNotes.getNumber();
+        int pageSize = userNotes.getSize();
+        boolean isEmpty = userNotes.isEmpty();
+        boolean isFirstPage = userNotes.isFirst();
+        boolean isLastPage = userNotes.isLast();
+
+        List<NotesEntity> paginatedUserNotes = userNotes.getContent();
+        List<NotesResponse> paginatedNotesResponse = mapperUtil.mapList(paginatedUserNotes, NotesResponse.class);
+
+        return NotesPaginationResponse.builder()
+                .notes(paginatedNotesResponse)
+                .pageNo(pageNum)
+                .pageSize(pageSize)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .isPageEmpty(isEmpty)
+                .isFirstPage(isFirstPage)
+                .isLastPage(isLastPage)
+                .build();
     }
 
 }

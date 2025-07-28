@@ -64,7 +64,7 @@ public class NotesController {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getUserNotesWithPagination(Integer userId, @RequestParam(name = "pageNo", defaultValue =
+    public ResponseEntity<?> getUserNotesWithPagination(@RequestParam(name = "pageNo", defaultValue =
             "0") Integer pageNo) {
         NotesPaginationResponse userNotesWithPagination = notesService.getUserNotesWithPagination(pageNo);
         return ResponseUtils.createSuccessResponse(userNotesWithPagination, HttpStatus.OK);
@@ -133,6 +133,14 @@ public class NotesController {
             throws ResourceNotFoundException, FileUploadFailedException, IOException, InvalidFileException {
         NotesResponse notesResponse = notesService.copyNotes(notesId);
         return ResponseUtils.createSuccessResponse(notesResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<?> searchUserNotesWithPagination(
+            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam String keyword) {
+        NotesPaginationResponse userNotesWithPagination = notesService.searchUserNotesWithPagination(keyword, pageNo);
+        return ResponseUtils.createSuccessResponse(userNotesWithPagination, HttpStatus.OK);
     }
 
 }
