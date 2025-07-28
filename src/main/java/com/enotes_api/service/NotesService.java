@@ -38,5 +38,8 @@ public interface NotesService {
 
     boolean emptyUserRecycleBin();
 
-    NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException, FileUploadFailedException, IOException;
+    NotesResponse copyNotes(Integer notesId) throws ResourceNotFoundException, InvalidFileException,
+            FileUploadFailedException, IOException;
+
+    NotesPaginationResponse searchUserNotesWithPagination(String keyword, Integer pageNo);
 }
