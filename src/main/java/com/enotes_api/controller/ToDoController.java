@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.endpoint.ToDoEndpoint;
 import com.enotes_api.entity.ToDoEntity;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.request.ToDoRequest;
@@ -12,54 +13,43 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/todo")
 @AllArgsConstructor
-public class ToDoController {
+public class ToDoController implements ToDoEndpoint {
 
     private ToDoService toDoService;
 
     private MapperUtil mapperUtil;
 
-    @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> saveTodo(@Valid @RequestBody ToDoRequest toDoRequest) throws ResourceNotFoundException {
         ToDoResponse savedToDoResponse = toDoService.saveTodo(toDoRequest);
         return ResponseUtils.createSuccessResponse(savedToDoResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{todo-id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> getToDoById(@PathVariable(name = "todo-id") Integer toDoId) throws ResourceNotFoundException {
         ToDoEntity toDoEntity = toDoService.getToDoById(toDoId);
         ToDoResponse toDoResponse = mapperUtil.map(toDoEntity, ToDoResponse.class);
         return ResponseUtils.createSuccessResponse(toDoResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/{todo-id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> updateTodo(@PathVariable(name = "todo-id") Integer toDoId,
                                         @RequestBody ToDoRequest toDoRequest) throws ResourceNotFoundException {
         ToDoResponse updatedToDoResponse = toDoService.updateTodo(toDoId, toDoRequest);
         return ResponseUtils.createSuccessResponse(updatedToDoResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{todo-id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> deleteToDoById(@PathVariable(name = "todo-id") Integer toDoId) {
         boolean isToDoDeleted = toDoService.deleteToDoById(toDoId);
         if (isToDoDeleted) {
@@ -68,8 +58,7 @@ public class ToDoController {
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.NOT_FOUND, "Todo Not Found");
     }
 
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> getUsersTodo(@RequestParam(name = "statusId", required = false) List<Integer> statusIds) {
         Integer userId = 1;
         List<ToDoEntity> usersTodo = toDoService.getUsersTodo(userId, statusIds);
@@ -79,13 +68,10 @@ public class ToDoController {
         return ResponseUtils.createSuccessResponse(userToDoResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Override
     public ResponseEntity<?> getAllToDoStatuses() {
         List<ToDoStatusEnumResponse> availableTodoStatuses = toDoService.getAvailableTodoStatuses();
-//        ToDoResponse toDoResponse = mapperUtil.map(toDoEntity, ToDoResponse.class);
         return ResponseUtils.createSuccessResponse(availableTodoStatuses, HttpStatus.OK);
     }
-
 
 }

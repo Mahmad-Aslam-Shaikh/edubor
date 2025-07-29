@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.endpoint.FavoriteNotesEndpoint;
 import com.enotes_api.entity.FavoriteNotesEntity;
 import com.enotes_api.exception.ResourceNotFoundException;
 import com.enotes_api.response.NotesResponse;
@@ -10,29 +11,22 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/notes")
 @Slf4j
 @AllArgsConstructor
-public class FavoriteNotesController {
+public class FavoriteNotesController implements FavoriteNotesEndpoint {
 
     private FavoriteNotesService favoriteNotesService;
 
     private MapperUtil mapperUtil;
 
-    @PostMapping("/favorite/{notes-id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> addToFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         log.info("FavoriteNotesController : addToFavorite() : Started");
         favoriteNotesService.makeNoteAsFavorite(notesId);
@@ -40,9 +34,8 @@ public class FavoriteNotesController {
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.CREATED, "Notes added to favorites");
     }
 
-    @GetMapping("/favorite/all")
-    @PreAuthorize("hasRole('USER')")
-    public Object getUsersFavoriteNotes() {
+    @Override
+    public ResponseEntity<?> getUsersFavoriteNotes() {
         log.info("FavoriteNotesController : getUsersFavoriteNotes() : Started");
         List<FavoriteNotesEntity> userFavoriteNotes = favoriteNotesService.getFavoriteNotesByUser();
         List<NotesResponse> favoriteNoteResponse =
@@ -52,8 +45,7 @@ public class FavoriteNotesController {
         return ResponseUtils.createSuccessResponse(favoriteNoteResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/favorite/{notes-id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> removeFromFavorite(@PathVariable(name = "notes-id") Integer notesId) throws ResourceNotFoundException {
         log.info("FavoriteNotesController : removeFromFavorite() : Started");
         favoriteNotesService.removeNoteFromFavorite(notesId);
