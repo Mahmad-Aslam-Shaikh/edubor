@@ -1,5 +1,6 @@
 package com.enotes_api.controller;
 
+import com.enotes_api.endpoint.MasterCategoryEndpoint;
 import com.enotes_api.entity.MasterCategoryEntity;
 import com.enotes_api.exception.ResourceAlreadyExistsException;
 import com.enotes_api.exception.ResourceNotFoundException;
@@ -12,51 +13,41 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/master-category")
 @AllArgsConstructor
-public class MasterCategoryController {
+public class MasterCategoryController implements MasterCategoryEndpoint {
 
     private MasterCategoryService masterCategoryService;
 
     private MapperUtil mapperUtil;
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> saveMasterCategory(@Valid @RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceAlreadyExistsException {
         MasterCategoryResponse savedMasterCategoryResponse =
                 masterCategoryService.saveMasterCategory(masterCategoryRequest);
         return ResponseUtils.createSuccessResponse(savedMasterCategoryResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getAllMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getAllMasterCategories();
         return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
-    @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Override
     public ResponseEntity<?> getActiveMasterCategories() {
         List<MasterCategoryResponse> masterCategories = masterCategoryService.getActiveMasterCategories();
         return ResponseUtils.createSuccessResponse(masterCategories, HttpStatus.OK);
     }
 
-    @GetMapping("/{category-id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getMasterCategory(@PathVariable(name = "category-id") Integer categoryId) throws ResourceNotFoundException {
         MasterCategoryEntity masterCategory = masterCategoryService.getMasterCategoryById(categoryId);
         MasterCategoryResponse masterCategoryResponse = mapperUtil.map(masterCategory, MasterCategoryResponse.class);
@@ -67,16 +58,14 @@ public class MasterCategoryController {
         return ResponseUtils.createSuccessResponse(masterCategoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> updateMasterCategory(@RequestBody MasterCategoryRequest masterCategoryRequest) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         MasterCategoryResponse updatedMasterCategoryResponse =
                 masterCategoryService.updateMasterCategory(masterCategoryRequest);
         return ResponseUtils.createSuccessResponse(updatedMasterCategoryResponse, HttpStatus.OK);
     }
 
-    @PutMapping("/{category-id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> deleteMasterCategory(@PathVariable(name = "category-id") Integer categoryId) {
         Boolean isDeleted = masterCategoryService.deleteMasterCategoryById(categoryId);
         if (isDeleted) {

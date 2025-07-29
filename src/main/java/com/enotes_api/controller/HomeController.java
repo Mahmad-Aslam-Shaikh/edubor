@@ -1,6 +1,6 @@
 package com.enotes_api.controller;
 
-import com.enotes_api.constants.RouteConstants;
+import com.enotes_api.endpoint.HomeEndpoint;
 import com.enotes_api.entity.UserEntity;
 import com.enotes_api.exception.EmailException;
 import com.enotes_api.exception.InvalidVerificationLinkException;
@@ -16,24 +16,19 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(RouteConstants.HOME)
 @AllArgsConstructor
-public class HomeController {
+public class HomeController implements HomeEndpoint {
 
     private UserService userService;
 
     private MapperUtil mapperUtil;
 
-    @GetMapping(RouteConstants.USER_VERIFY)
+    @Override
     public ResponseEntity<?> verifyUserEmail(@RequestParam(name = "user-id") Integer userId,
                                              @RequestParam(name = "code") String verificationCode) throws
             InvalidVerificationLinkException, ResourceNotFoundException, ResourceAlreadyVerifiedException {
@@ -44,13 +39,13 @@ public class HomeController {
         return ResponseUtils.createFailureResponseWithMessage(HttpStatus.UNPROCESSABLE_ENTITY, "Failed to verify User");
     }
 
-    @PostMapping(RouteConstants.USER_PASSWORD_RESET_EMAIL)
+    @Override
     public ResponseEntity<?> sendPasswordResetMail(@RequestParam String userEmail, HttpServletRequest request) throws ResourceNotFoundException, EmailException {
         userService.sendPasswordResetMail(userEmail, request);
         return ResponseUtils.createSuccessResponseWithMessage(HttpStatus.OK, "Password reset link sent successfully.");
     }
 
-    @GetMapping(RouteConstants.USER_PASSWORD_VERIFY)
+    @Override
     public ResponseEntity<?> verifyPasswordResetLink(@RequestParam(name = "user-id") Integer userId,
                                                      @RequestParam(name = "code") String passwordResetCodeRequest) throws ResourceNotFoundException {
         boolean isPasswordResetLinkValid = userService.verifyUserForPasswordReset(userId, passwordResetCodeRequest);
@@ -61,7 +56,7 @@ public class HomeController {
                 "to Password Reset");
     }
 
-    @PutMapping(RouteConstants.USER_PASSWORD_RESET)
+    @Override
     public ResponseEntity<?> resetUserPassword(@RequestParam Integer userId,
                                                @Valid @RequestBody PasswordResetRequest passwordResetRequest) throws ResourceNotFoundException, PasswordChangeException {
         userService.resetUserPassword(userId, passwordResetRequest);
